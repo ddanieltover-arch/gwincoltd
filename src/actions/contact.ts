@@ -1,10 +1,10 @@
 "use server";
 
 import { headers } from "next/headers";
+import { sendFormEmails } from "@/lib/email/send";
 import { contactSchema, quoteSchema } from "@/lib/validations/contact";
 import { getClientKey, rateLimit } from "@/lib/rate-limit";
 import { storeContactSubmission, storeQuoteSubmission } from "@/lib/submission-store";
-import { escapeHtml } from "@/lib/utils";
 
 type FormResult =
   | { success: true }
@@ -38,64 +38,6 @@ async function assertRateLimit(action: string): Promise<FormResult | null> {
   return null;
 }
 
-async function sendEmail(payload: {
-  type: "contact" | "quote";
-  name: string;
-  email: string;
-  phone: string;
-  subject: string;
-  message: string;
-  product?: string;
-}): Promise<void> {
-  const apiKey = process.env.RESEND_API_KEY;
-  const to = process.env.CONTACT_EMAIL ?? "sales@gwincoltd.com";
-  const from = process.env.EMAIL_FROM ?? "noreply@gwincoltd.com";
-
-  const safe = {
-    name: escapeHtml(payload.name),
-    email: escapeHtml(payload.email),
-    phone: escapeHtml(payload.phone),
-    subject: escapeHtml(payload.subject),
-    message: escapeHtml(payload.message),
-    product: payload.product ? escapeHtml(payload.product) : undefined,
-  };
-
-  if (!apiKey) {
-    console.info("[contact] RESEND_API_KEY not set — logging submission:", payload);
-    return;
-  }
-
-  const productLine = safe.product
-    ? `<p><strong>Product:</strong> ${safe.product}</p>`
-    : "";
-
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from,
-      to,
-      reply_to: payload.email,
-      subject: `[${payload.type === "quote" ? "Quote" : "Contact"}] ${payload.subject}`,
-      html: `
-        <h2>New ${payload.type} enquiry from ${safe.name}</h2>
-        <p><strong>Email:</strong> ${safe.email}</p>
-        <p><strong>Phone:</strong> ${safe.phone}</p>
-        ${productLine}
-        <p><strong>Message:</strong></p>
-        <p>${safe.message}</p>
-      `,
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Resend API error: ${response.status}`);
-  }
-}
-
 export async function submitContactForm(data: unknown): Promise<FormResult> {
   const limited = await assertRateLimit("contact");
   if (limited) return limited;
@@ -103,7 +45,7 @@ export async function submitContactForm(data: unknown): Promise<FormResult> {
   const parsed = contactSchema.safeParse(data);
   if (!parsed.success) {
     return {
-      error: "Invalid form data",
+      error: "Please check the highlighted fields and try again.",
       fields: parsed.error.flatten().fieldErrors as Record<string, string[]>,
     };
   }
@@ -111,7 +53,7 @@ export async function submitContactForm(data: unknown): Promise<FormResult> {
   try {
     const meta = await getRequestMeta();
     await Promise.all([
-      sendEmail({
+      sendFormEmails({
         type: "contact",
         name: parsed.data.name,
         email: parsed.data.email,
@@ -124,7 +66,8 @@ export async function submitContactForm(data: unknown): Promise<FormResult> {
       }),
     ]);
     return { success: true };
-  } catch {
+  } catch (err) {
+    console.error("[contact] Submission failed:", err);
     return { error: "Failed to send message. Please try again or contact us via WhatsApp." };
   }
 }
@@ -136,7 +79,7 @@ export async function submitQuoteForm(data: unknown): Promise<FormResult> {
   const parsed = quoteSchema.safeParse(data);
   if (!parsed.success) {
     return {
-      error: "Invalid form data",
+      error: "Please check the highlighted fields and try again.",
       fields: parsed.error.flatten().fieldErrors as Record<string, string[]>,
     };
   }
@@ -144,7 +87,7 @@ export async function submitQuoteForm(data: unknown): Promise<FormResult> {
   try {
     const meta = await getRequestMeta();
     await Promise.all([
-      sendEmail({
+      sendFormEmails({
         type: "quote",
         name: parsed.data.name,
         email: parsed.data.email,
@@ -158,7 +101,8 @@ export async function submitQuoteForm(data: unknown): Promise<FormResult> {
       }),
     ]);
     return { success: true };
-  } catch {
+  } catch (err) {
+    console.error("[quote] Submission failed:", err);
     return { error: "Failed to send enquiry. Please try again or contact us via WhatsApp." };
   }
 }

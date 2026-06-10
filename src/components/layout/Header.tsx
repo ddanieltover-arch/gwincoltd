@@ -1,14 +1,9 @@
-"use client";
-
 import Link from "next/link";
-import { useState } from "react";
-import { Menu, X, Phone, Mail } from "lucide-react";
+import { Menu, Phone, Mail } from "lucide-react";
 import { navItems, siteConfig } from "@/config/site";
 import { Logo } from "@/components/shared/Logo";
 
 export function Header() {
-  const [open, setOpen] = useState(false);
-
   return (
     <header className="sticky top-0 z-50 border-b border-emerald-900/10 bg-white/95 backdrop-blur-md">
       <div className="hidden border-b border-emerald-900/5 bg-emerald-950 text-emerald-50 lg:block">
@@ -51,37 +46,36 @@ export function Header() {
           </Link>
         </nav>
 
-        <button
-          type="button"
-          className="rounded-lg p-2 text-emerald-900 lg:hidden"
-          onClick={() => setOpen(!open)}
-          aria-expanded={open}
-          aria-controls="mobile-nav"
-          aria-label={open ? "Close menu" : "Open menu"}
-        >
-          {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
-      </div>
-
-      {open && (
-        <div
-          id="mobile-nav"
-          className="overflow-hidden border-t border-emerald-900/5 bg-white lg:hidden"
-        >
-          <nav className="flex flex-col gap-1 px-6 py-4" aria-label="Mobile navigation">
+        <details className="group relative lg:hidden">
+          <summary
+            className="flex cursor-pointer list-none items-center rounded-lg p-2 text-emerald-900 marker:content-none [&::-webkit-details-marker]:hidden"
+            aria-label="Open menu"
+          >
+            <Menu className="h-6 w-6 group-open:hidden" aria-hidden="true" />
+            <span className="sr-only">Menu</span>
+          </summary>
+          <nav
+            className="absolute right-0 top-full z-50 mt-2 min-w-[12rem] rounded-xl border border-emerald-900/10 bg-white p-2 shadow-lg"
+            aria-label="Mobile navigation"
+          >
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                onClick={() => setOpen(false)}
                 className="block rounded-lg px-3 py-2.5 text-sm font-medium text-emerald-900 hover:bg-emerald-50"
               >
                 {item.label}
               </Link>
             ))}
+            <Link
+              href="/contact-us"
+              className="mt-1 block rounded-lg bg-emerald-700 px-3 py-2.5 text-center text-sm font-semibold text-white hover:bg-emerald-800"
+            >
+              Get a Quote
+            </Link>
           </nav>
-        </div>
-      )}
+        </details>
+      </div>
     </header>
   );
 }

@@ -3,18 +3,32 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { motion } from "framer-motion";
+import { Loader2, Mail, Send } from "lucide-react";
 import { submitContactForm } from "@/actions/contact";
+import {
+  FormAlert,
+  FormField,
+  FormHeader,
+  formInputClass,
+} from "@/components/forms/FormField";
 import { contactSchema, type ContactFormData } from "@/lib/validations/contact";
 import { cn } from "@/lib/utils";
-import { defaultTransition, easeOut, fadeUp, staggerContainer } from "@/lib/motion";
 
 interface ContactFormProps {
   className?: string;
 }
 
+const defaultValues: ContactFormData = {
+  name: "",
+  email: "",
+  phone: "",
+  subject: "General enquiry",
+  message: "",
+};
+
 export function ContactForm({ className }: ContactFormProps) {
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
+  const [serverError, setServerError] = useState<string | null>(null);
 
   const {
     register,
@@ -23,118 +37,116 @@ export function ContactForm({ className }: ContactFormProps) {
     formState: { errors, isSubmitting },
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
-    defaultValues: { subject: "General enquiry" },
+    defaultValues,
   });
 
   const onSubmit = async (data: ContactFormData) => {
     setStatus("idle");
+    setServerError(null);
     const result = await submitContactForm(data);
+
     if ("success" in result && result.success) {
       setStatus("success");
-      reset({ subject: "General enquiry" });
-    } else {
-      setStatus("error");
+      reset(defaultValues);
+      return;
     }
+
+    setStatus("error");
+    setServerError("error" in result ? result.error : "Something went wrong.");
   };
 
-  const fieldClass =
-    "w-full rounded-xl border border-emerald-900/15 bg-white px-4 py-3 text-sm text-emerald-950 outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20";
-
   return (
-    <motion.div
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-40px" }}
-      variants={staggerContainer(0.08, 0)}
+    <div
       className={cn(
-        "rounded-2xl border border-emerald-900/10 bg-stone-50 p-6 md:p-8",
+        "overflow-hidden rounded-2xl border border-emerald-900/10 bg-white shadow-lg shadow-emerald-950/5",
         className,
       )}
     >
-      <motion.h2
-        variants={fadeUp}
-        transition={{ ...defaultTransition, ease: easeOut }}
-        className="text-xl font-bold text-emerald-950"
-      >
-        Send a Message
-      </motion.h2>
-      <motion.p
-        variants={fadeUp}
-        transition={{ ...defaultTransition, ease: easeOut }}
-        className="mt-1 text-sm text-emerald-900/70"
-      >
-        Fill in your details and our team will respond with pricing, availability, or any
-        questions you have.
-      </motion.p>
+      <div className="p-6 md:p-8">
+        <FormHeader
+          icon={Mail}
+          title="Send a Message"
+          description="Tell us what you need — pricing, availability, shipping, or a general question. We reply within 24 business hours."
+        />
 
-      <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4">
-        <motion.div
-          variants={fadeUp}
-          transition={{ ...defaultTransition, ease: easeOut }}
-          className="grid gap-4 md:grid-cols-2"
-        >
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-emerald-900">Name *</label>
-            <input className={fieldClass} {...register("name")} />
-            {errors.name && <p className="mt-1 text-xs text-red-600">{errors.name.message}</p>}
+        <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-5" noValidate>
+          <div className="grid gap-5 md:grid-cols-2">
+            <FormField label="Full name" htmlFor="contact-name" required error={errors.name?.message}>
+              <input
+                id="contact-name"
+                className={formInputClass}
+                autoComplete="name"
+                {...register("name")}
+              />
+            </FormField>
+            <FormField label="Email address" htmlFor="contact-email" required error={errors.email?.message}>
+              <input
+                id="contact-email"
+                type="email"
+                className={formInputClass}
+                autoComplete="email"
+                {...register("email")}
+              />
+            </FormField>
+            <FormField label="Phone / WhatsApp" htmlFor="contact-phone" required error={errors.phone?.message}>
+              <input
+                id="contact-phone"
+                type="tel"
+                className={formInputClass}
+                autoComplete="tel"
+                placeholder="+66 ..."
+                {...register("phone")}
+              />
+            </FormField>
+            <FormField label="Subject" htmlFor="contact-subject" required error={errors.subject?.message}>
+              <input id="contact-subject" className={formInputClass} {...register("subject")} />
+            </FormField>
           </div>
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-emerald-900">Email *</label>
-            <input type="email" className={fieldClass} {...register("email")} />
-            {errors.email && <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>}
-          </div>
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-emerald-900">Phone *</label>
-            <input className={fieldClass} {...register("phone")} />
-            {errors.phone && <p className="mt-1 text-xs text-red-600">{errors.phone.message}</p>}
-          </div>
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-emerald-900">Subject *</label>
-            <input className={fieldClass} {...register("subject")} />
-            {errors.subject && (
-              <p className="mt-1 text-xs text-red-600">{errors.subject.message}</p>
-            )}
-          </div>
-        </motion.div>
-        <motion.div variants={fadeUp} transition={{ ...defaultTransition, ease: easeOut }}>
-          <label className="mb-1.5 block text-sm font-medium text-emerald-900">Message *</label>
-          <textarea rows={5} className={fieldClass} {...register("message")} />
-          {errors.message && (
-            <p className="mt-1 text-xs text-red-600">{errors.message.message}</p>
+
+          <FormField label="Your message" htmlFor="contact-message" required error={errors.message?.message}>
+            <textarea
+              id="contact-message"
+              rows={5}
+              className={cn(formInputClass, "resize-y min-h-[140px]")}
+              placeholder="Tell us about quantities, destination country, product interest..."
+              {...register("message")}
+            />
+          </FormField>
+
+          {status === "success" && (
+            <FormAlert
+              variant="success"
+              title="Message sent successfully"
+              message="Thank you! A confirmation email is on its way. Our export team will contact you shortly."
+            />
           )}
-        </motion.div>
+          {status === "error" && (
+            <FormAlert
+              variant="error"
+              title="Unable to send"
+              message={serverError ?? "Please try again or reach us via WhatsApp."}
+            />
+          )}
 
-        {status === "success" && (
-          <motion.p
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="rounded-lg bg-emerald-100 px-4 py-3 text-sm text-emerald-800"
-          >
-            Thank you! Your message has been sent. We will contact you shortly.
-          </motion.p>
-        )}
-        {status === "error" && (
-          <motion.p
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700"
-          >
-            Something went wrong. Please try again or reach us via WhatsApp.
-          </motion.p>
-        )}
-
-        <motion.div variants={fadeUp} transition={{ ...defaultTransition, ease: easeOut }}>
-          <motion.button
+          <button
             type="submit"
             disabled={isSubmitting}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="w-full rounded-xl bg-emerald-700 px-6 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:opacity-60 md:w-auto"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-700 px-6 py-3.5 text-sm font-semibold text-white shadow-md shadow-emerald-900/15 transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60 md:w-auto"
           >
-            {isSubmitting ? "Sending..." : "Send Message"}
-          </motion.button>
-        </motion.div>
-      </form>
-    </motion.div>
+            {isSubmitting ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                Sending...
+              </>
+            ) : (
+              <>
+                <Send className="h-4 w-4" aria-hidden="true" />
+                Send Message
+              </>
+            )}
+          </button>
+        </form>
+      </div>
+    </div>
   );
 }
