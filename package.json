@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "format": "prettier --write \"src/**/*.{ts,tsx}\""
+    "format": "prettier --write \"src/**/*.{ts,tsx}\"",
+    "extract:wp": "node scripts/extract-wp-content.mjs",
+    "generate:products": "node scripts/generate-products.mjs",
+    "fix:images": "node scripts/fix-description-images.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",

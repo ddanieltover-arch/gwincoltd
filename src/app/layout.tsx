@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { ScrollToTop } from "@/components/shared/ScrollToTop";
 import "./globals.css";
 import { siteConfig } from "@/config/site";
 
@@ -44,7 +45,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} h-full scroll-smooth antialiased`}>
-      <body className="flex min-h-full flex-col">{children}</body>
+      <body className="flex min-h-full flex-col">
+        <ScrollToTop />
+        {children}
+      </body>
     </html>
   );
 }

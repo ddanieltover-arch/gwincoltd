@@ -10,6 +10,7 @@ export interface Product {
   name: string;
   category: ProductCategory;
   description: string;
+  descriptionHtml?: string;
   image: string;
   images?: string[];
   highlights?: string[];

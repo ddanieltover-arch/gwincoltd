@@ -19,7 +19,7 @@ export function WhatsAppButton() {
     >
       {!reduced && (
         <motion.span
-          className="absolute inset-0 rounded-full bg-[#25D366]"
+          className="absolute inset-0 rounded-full bg-emerald-600"
           animate={{ scale: [1, 1.35, 1], opacity: [0.5, 0, 0.5] }}
           transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
         />
@@ -30,7 +30,7 @@ export function WhatsAppButton() {
         rel="noopener noreferrer"
         whileHover={{ scale: 1.08 }}
         whileTap={{ scale: 0.95 }}
-        className="relative flex items-center gap-2 rounded-full bg-[#25D366] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-900/25"
+        className="relative flex items-center gap-2 rounded-full bg-emerald-700 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-900/20 transition-colors hover:bg-emerald-800"
         aria-label="Chat on WhatsApp"
       >
         <motion.span

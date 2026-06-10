@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { ProductGallery } from "@/components/products/ProductGallery";
+import { ProductGrid } from "@/components/products/ProductGrid";
+import { ProductContent } from "@/components/sections/ProductContent";
 import { QuoteForm } from "@/components/sections/QuoteForm";
 import { categoryLabels } from "@/config/site";
-import { getAllProductSlugs, getProductBySlug } from "@/data/products";
+import { getAllProductSlugs, getProductBySlug, getRelatedProducts } from "@/data/products";
 import { siteConfig } from "@/config/site";
 import { absoluteImageUrl } from "@/lib/images";
 
@@ -39,6 +41,16 @@ export default async function ProductPage({ params }: ProductPageProps) {
   if (!product) notFound();
 
   const gallery = [product.image, ...(product.images ?? [])];
+  const relatedProducts = getRelatedProducts(slug);
+
+  const productHeader = (
+    <>
+      <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-800">
+        {categoryLabels[product.category]}
+      </span>
+      <h1 className="mt-4 text-3xl font-bold text-emerald-950 md:text-4xl">{product.name}</h1>
+    </>
+  );
 
   return (
     <>
@@ -56,37 +68,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
       <section className="py-16">
         <div className="mx-auto grid max-w-7xl gap-12 px-6 lg:grid-cols-2">
+          <div className="lg:hidden">{productHeader}</div>
+
           <div>
-            <div className="relative aspect-square overflow-hidden rounded-2xl bg-emerald-50">
-              <Image
-                src={product.image}
-                alt={product.name}
-                fill
-                className="object-cover"
-                priority
-                sizes="(max-width: 1024px) 100vw, 50vw"
-              />
-            </div>
-            {gallery.length > 1 && (
-              <div className="mt-4 grid grid-cols-4 gap-3">
-                {gallery.slice(0, 4).map((src) => (
-                  <div
-                    key={src}
-                    className="relative aspect-square overflow-hidden rounded-xl bg-emerald-50"
-                  >
-                    <Image src={src} alt="" fill className="object-cover" sizes="120px" />
-                  </div>
-                ))}
-              </div>
-            )}
+            <ProductGallery images={gallery} alt={product.name} />
           </div>
 
           <div>
-            <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-800">
-              {categoryLabels[product.category]}
-            </span>
-            <h1 className="mt-4 text-3xl font-bold text-emerald-950 md:text-4xl">{product.name}</h1>
-            <p className="mt-6 text-lg leading-relaxed text-emerald-900/80">{product.description}</p>
+            <div className="hidden lg:block">{productHeader}</div>
             <p className="mt-6 text-sm text-emerald-800/70">
               Request a wholesale quote for pricing, minimum order quantities, and shipping
               arrangements. Our team typically responds within 24 hours.
@@ -96,6 +85,38 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </div>
           </div>
         </div>
+
+        {(product.descriptionHtml || product.description) && (
+          <div className="mx-auto mt-16 max-w-7xl px-6">
+            <div className="border-t border-emerald-900/10 pt-12">
+              <h2 className="text-2xl font-bold text-emerald-950 md:text-3xl">Product Description</h2>
+              <p className="mt-2 text-sm text-emerald-800/70">
+                Detailed specifications, packaging options, and export information.
+              </p>
+              <div className="mt-8 rounded-2xl border border-emerald-900/10 bg-white p-6 md:p-10">
+                {product.descriptionHtml ? (
+                  <ProductContent html={product.descriptionHtml} />
+                ) : (
+                  <p className="text-lg leading-7 text-emerald-900/85">{product.description}</p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {relatedProducts.length > 0 && (
+          <div className="mx-auto mt-16 max-w-7xl px-6">
+            <div className="border-t border-emerald-900/10 pt-12">
+              <h2 className="text-2xl font-bold text-emerald-950 md:text-3xl">Related Products</h2>
+              <p className="mt-2 text-sm text-emerald-800/70">
+                More {categoryLabels[product.category].toLowerCase()} products from our catalog.
+              </p>
+              <div className="mt-8">
+                <ProductGrid products={relatedProducts} />
+              </div>
+            </div>
+          </div>
+        )}
       </section>
 
       <script

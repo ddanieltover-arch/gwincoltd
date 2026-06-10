@@ -9,10 +9,10 @@ Complete deliverables for the `wordpress-reverse-engineer` skill.
 
 Global Win Co. Ltd's WordPress site (Flatsome + WooCommerce quote model) has been reverse-engineered into a **static Next.js 16 application** with zero WordPress runtime dependency. The rebuild preserves core URLs, product catalog, contact/quote flows, branding, and local media from the Hostinger backup.
 
-**Inputs used:** `public_html/wp-content/` (themes, plugins, 1,725 upload images), Rank Math sitemaps, web search snapshots, user-provided logo and office photo.  
-**Missing input:** MySQL database dump — product long-form copy was reconstructed from slugs and sitemaps, not extracted verbatim from `wp_posts`.
+**Inputs used:** `public_html/wp-content/` (themes, plugins, 1,725 upload images), Rank Math sitemaps, web search snapshots, user-provided logo and office photo, MySQL dump `u196234866_i5Wfk.sql`.  
+**SQL import:** All 36 WooCommerce product titles and long-form HTML descriptions imported from `wp_posts` via `npm run extract:wp` → `npm run generate:products`.
 
-**Status:** Production-deployable after Resend configuration and Vercel DNS cutover. Optional: SQL export to reconcile exact product descriptions.
+**Status:** Production-deployable after Resend configuration and Vercel DNS cutover.
 
 ---
 
@@ -87,7 +87,8 @@ Global Win Co. Ltd's WordPress site (Flatsome + WooCommerce quote model) has bee
 - **1,725 images** in `public/uploads/` mirroring `wp-content/uploads/`
 - **Brand assets:** `public/logo.png`, `public/office.png`
 
-**Gap:** Long product descriptions, meta descriptions per product, and privacy policy legal text should be validated against a MySQL export when available.
+**Imported from SQL:** Product titles + full HTML descriptions (`descriptionHtml` on product pages).  
+**Remaining gap:** Privacy policy and about-page copy still use structured Next.js templates (WP Flatsome shortcodes in `src/data/wp-extracted.json` for reference).
 
 ---
 
@@ -164,11 +165,14 @@ UX modernized vs Flatsome: cleaner spacing, faster load, mobile-first nav, singl
 
 **Current:** No database. Products and pages are TypeScript modules.
 
-**If SQL dump becomes available:**
-1. Export `wp_posts`, `wp_postmeta`, `wp_terms` from Hostinger phpMyAdmin
-2. Parse WooCommerce `_product` posts → enrich `products.ts` descriptions
-3. Extract Rank Math `_rank_math_*` meta → per-page `metadata`
-4. Map `attachment` posts → verify image paths in `public/uploads/`
+**Completed (June 2026):**
+1. Parsed `u196234866_i5Wfk.sql` → `src/data/wp-extracted.json`
+2. Regenerated `src/data/products.ts` with WP titles + HTML descriptions
+3. Scripts: `npm run extract:wp`, `npm run generate:products`
+
+**Optional follow-up:**
+- Extract Rank Math `_rank_math_*` meta → per-page `metadata`
+- Port privacy-policy HTML from `wp-extracted.json` pages section
 
 **No runtime MySQL required** for the Next.js site.
 
@@ -312,7 +316,7 @@ See `.env.example`. Required for production forms:
 
 ## 17. Improvement Opportunities (ranked)
 
-1. **MySQL export** — exact product copy and SEO meta (high impact)
+1. **Rank Math meta import** — per-product SEO titles/descriptions from SQL (high impact)
 2. **Resend + domain verify** — live form delivery (high)
 3. **Google Analytics 4** — replace Site Kit (medium)
 4. **Sanity CMS** — non-dev product updates (medium)
