@@ -1,40 +1,20 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Cookie, Database, Lock, Mail, Shield } from "lucide-react";
+import { Mail } from "lucide-react";
 import { PageHero } from "@/components/shared/PageHero";
 import { FadeIn } from "@/components/shared/FadeIn";
 import { StaggerChildren, StaggerItem } from "@/components/shared/StaggerChildren";
 import { siteConfig } from "@/config/site";
+import { privacyPageContent } from "@/data/pages";
+import { pageSeo } from "@/data/seo";
+import { seoToMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = seoToMetadata(pageSeo["privacy-policy"], {
   title: "Privacy Policy",
   description: `How ${siteConfig.name} collects, uses, and protects your personal information.`,
-};
+});
 
 const lastUpdated = "June 2026";
-
-const sections = [
-  {
-    icon: Database,
-    title: "Information We Collect",
-    body: "When you contact us or submit a product enquiry, we collect your name, email address, phone number, and message content so we can respond to your request.",
-  },
-  {
-    icon: Shield,
-    title: "How We Use Your Information",
-    body: "We use the information you provide solely to process enquiries, provide quotes, and communicate about our products and services. We do not sell your personal data to third parties.",
-  },
-  {
-    icon: Cookie,
-    title: "Cookies & Analytics",
-    body: "Our website may use cookies and analytics tools to improve user experience and understand site traffic. You can control cookie preferences through your browser settings.",
-  },
-  {
-    icon: Lock,
-    title: "Data Security",
-    body: "We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, or disclosure.",
-  },
-] as const;
 
 export default function PrivacyPolicyPage() {
   return (
@@ -42,7 +22,7 @@ export default function PrivacyPolicyPage() {
       <PageHero
         label="Legal"
         title="Privacy Policy"
-        description={`How ${siteConfig.name} handles your personal information when you visit our website or contact us.`}
+        description={`How ${siteConfig.name} handles your personal information when you visit our website or place an order.`}
       />
 
       <section className="py-20">
@@ -64,18 +44,44 @@ export default function PrivacyPolicyPage() {
             </div>
           </FadeIn>
 
+          <FadeIn delay={0.05}>
+            <article className="mb-8 rounded-2xl border border-emerald-900/10 bg-white p-8 shadow-sm">
+              <h2 className="text-xl font-bold text-emerald-950">Privacy Policy</h2>
+              <div className="mt-4 space-y-4 leading-relaxed text-emerald-900/75">
+                {privacyPageContent.introParagraphs.map((paragraph) => (
+                  <p key={paragraph.slice(0, 40)}>{paragraph}</p>
+                ))}
+              </div>
+            </article>
+          </FadeIn>
+
           <StaggerChildren className="space-y-6" stagger={0.1}>
-            {sections.map(({ icon: Icon, title, body }) => (
-              <StaggerItem key={title}>
-                <article className="rounded-2xl border border-emerald-900/10 bg-white p-8 shadow-sm transition-shadow hover:shadow-md">
-                  <div className="flex gap-5">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
-                      <Icon className="h-6 w-6" />
-                    </div>
-                    <div>
-                      <h2 className="text-xl font-bold text-emerald-950">{title}</h2>
-                      <p className="mt-3 leading-relaxed text-emerald-900/75">{body}</p>
-                    </div>
+            {privacyPageContent.sections.map((section) => (
+              <StaggerItem key={section.title}>
+                <article
+                  className={`rounded-2xl border border-emerald-900/10 p-8 shadow-sm transition-shadow hover:shadow-md ${
+                    section.title === "LEGAL NOTICE"
+                      ? "bg-emerald-950 text-white"
+                      : "bg-white"
+                  }`}
+                >
+                  <h2
+                    className={`text-xl font-bold ${
+                      section.title === "LEGAL NOTICE" ? "text-white" : "text-emerald-950"
+                    }`}
+                  >
+                    {section.title}
+                  </h2>
+                  <div
+                    className={`mt-4 space-y-4 leading-relaxed ${
+                      section.title === "LEGAL NOTICE"
+                        ? "text-emerald-100/85"
+                        : "text-emerald-900/75"
+                    }`}
+                  >
+                    {section.body.split("\n").map((paragraph) => (
+                      <p key={paragraph.slice(0, 40)}>{paragraph}</p>
+                    ))}
                   </div>
                 </article>
               </StaggerItem>

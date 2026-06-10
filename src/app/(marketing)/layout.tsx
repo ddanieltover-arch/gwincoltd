@@ -1,7 +1,6 @@
-import { BackToTop } from "@/components/shared/BackToTop";
+import { DeferredWidgets } from "@/components/layout/DeferredWidgets";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
-import { WhatsAppButton } from "@/components/shared/WhatsAppButton";
 
 export default function MarketingLayout({
   children,
@@ -13,8 +12,7 @@ export default function MarketingLayout({
       <Header />
       <main className="flex-1">{children}</main>
       <Footer />
-      <BackToTop />
-      <WhatsAppButton />
+      <DeferredWidgets />
     </>
   );
 }

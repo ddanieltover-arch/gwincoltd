@@ -4,6 +4,8 @@ import { Suspense } from "react";
 import { ProductCatalog } from "@/components/products/ProductCatalog";
 import { PageHero } from "@/components/shared/PageHero";
 import { categoryDescriptions, categoryLabels, productCategories } from "@/config/site";
+import { categorySeo } from "@/data/seo";
+import { seoToMetadata } from "@/lib/seo";
 import type { ProductCategory } from "@/types";
 
 interface CategoryPageProps {
@@ -21,10 +23,10 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
   }
 
   const key = category as ProductCategory;
-  return {
+  return seoToMetadata(categorySeo[key], {
     title: categoryLabels[key],
     description: categoryDescriptions[key],
-  };
+  });
 }
 
 export default async function CategoryProductsPage({ params }: CategoryPageProps) {

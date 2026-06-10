@@ -1,0 +1,59 @@
+// Global Win Co. Ltd — lead storage for admin dashboard (PostgreSQL via Supabase)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL")
+}
+
+enum SubmissionStatus {
+  NEW
+  READ
+  REPLIED
+  ARCHIVED
+}
+
+model QuoteRequest {
+  id        String           @id @default(cuid())
+  fullName  String
+  email     String
+  phone     String
+  subject   String
+  enquiry   String           @db.Text
+  product   String?
+  status    SubmissionStatus @default(NEW)
+  ipAddress String?
+  userAgent String?
+  notes     String?          @db.Text
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  @@map("quote_requests")
+  @@index([status])
+  @@index([email])
+  @@index([createdAt])
+}
+
+model ContactSubmission {
+  id        String           @id @default(cuid())
+  fullName  String
+  email     String
+  phone     String
+  subject   String
+  message   String           @db.Text
+  status    SubmissionStatus @default(NEW)
+  ipAddress String?
+  userAgent String?
+  notes     String?          @db.Text
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  @@map("contact_submissions")
+  @@index([status])
+  @@index([email])
+  @@index([createdAt])
+}

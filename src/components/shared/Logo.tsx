@@ -45,7 +45,7 @@ export function Logo({
       <p
         className={cn(
           "mt-0.5 truncate text-xs sm:text-sm",
-          inverted ? "text-emerald-200/80" : "text-emerald-700/80",
+          inverted ? "text-emerald-200" : "text-emerald-800",
         )}
       >
         {siteConfig.thaiName}

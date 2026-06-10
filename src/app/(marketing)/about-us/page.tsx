@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import { CTABanner } from "@/components/sections/CTABanner";
 import { OperationsGallery } from "@/components/sections/OperationsGallery";
 import { OfficeShowcase } from "@/components/sections/OfficeShowcase";
@@ -7,38 +8,34 @@ import { PageHero } from "@/components/shared/PageHero";
 import { FadeIn } from "@/components/shared/FadeIn";
 import { StaggerChildren, StaggerItem } from "@/components/shared/StaggerChildren";
 import { siteConfig } from "@/config/site";
+import { aboutPageContent } from "@/data/pages";
+import { pageSeo } from "@/data/seo";
 import { upload } from "@/lib/images";
+import { seoToMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = seoToMetadata(pageSeo["about-us"], {
   title: "About Us",
   description: `Learn about ${siteConfig.name} — a leading multi-commodity trading company based in Thailand.`,
-};
+});
 
 const ABOUT_IMAGE = upload(
   "2024/12/rice-terraces-hills-and-blue-sky-2024-11-29-02-37-33-utc-scaled.jpg",
 );
 
-const reasons = [
-  {
-    title: "Competitive Pricing",
-    text: "Thailand's lower production costs mean you get premium commodities at 1.5–2× better value than other exporting countries.",
-  },
-  {
-    title: "Quality Certifications",
-    text: "GMP, HACCP, and Global GAP certified products with rigorous quality control at every stage.",
-  },
-  {
-    title: "Reliable Export Partner",
-    text: `Operating since ${siteConfig.founded}, we have established ourselves as a stable and dependable trading partner.`,
-  },
-];
+const companyIntro =
+  aboutPageContent.introParagraphs[0]?.includes("Global Win Co. Ltd®")
+    ? aboutPageContent.introParagraphs[0]
+        .split(/\n\s*/)
+        .find((p) => p.includes("Global Win Co. Ltd®")) ?? aboutPageContent.introParagraphs[0]
+    : aboutPageContent.introParagraphs[0];
 
 export default function AboutPage() {
   return (
     <>
       <PageHero
-        label="About Us"
-        title="Your Trusted Partner in Global Commodity Trading"
+        label={aboutPageContent.heroLabel}
+        title={aboutPageContent.heroTitle}
+        description={aboutPageContent.intro}
       />
 
       <section className="py-20">
@@ -56,46 +53,57 @@ export default function AboutPage() {
           </FadeIn>
           <FadeIn direction="left" delay={0.1}>
             <div className="space-y-6 text-emerald-900/80">
-              <p className="text-lg leading-relaxed">
-                <strong className="text-emerald-950">{siteConfig.name}</strong> is a leading
-                grower, cultivator, and wholesale supplier with more than {siteConfig.experienceYears}{" "}
-                years of experience in agriculture and cultivation. We professionally export sugar,
-                grains, fertilizer, and a wide range of other products to international markets
-                worldwide.
-              </p>
-              <p className="leading-relaxed">
-                {siteConfig.shortName} Markets is a company with a widespread business network
-                dedicated to satisfying clients. Recognized as a multi-commodity trading entity, we
-                serve numerous industries from our main branch in Thailand.
-              </p>
-              <p className="leading-relaxed">
-                As a quality-conscious firm, we maintain high international standards with GMP, HACCP,
-                and Global GAP certifications. Our experienced workforce handles packing and
-                repacking at dedicated stations, ensuring every shipment meets the highest quality
-                standards at competitive prices.
-              </p>
+              <h2 className="text-2xl font-bold text-emerald-950">{siteConfig.name}</h2>
+              <p className="text-lg leading-relaxed">{aboutPageContent.intro}</p>
+              {companyIntro && companyIntro !== aboutPageContent.intro && (
+                <p className="leading-relaxed">{companyIntro}</p>
+              )}
+              <div className="flex flex-wrap gap-4 pt-2">
+                <Link
+                  href="/our-products"
+                  className="inline-flex items-center justify-center rounded-full bg-emerald-700 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800"
+                >
+                  Our Products
+                </Link>
+                <Link
+                  href="/contact-us"
+                  className="inline-flex items-center justify-center rounded-full border border-emerald-700 px-6 py-2.5 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-50"
+                >
+                  Contact Us
+                </Link>
+              </div>
             </div>
           </FadeIn>
+        </div>
+      </section>
+
+      <section className="bg-emerald-950 py-20 text-white">
+        <div className="mx-auto max-w-7xl px-6">
+          <StaggerChildren className="grid gap-8 md:grid-cols-2 lg:grid-cols-3" stagger={0.1}>
+            {aboutPageContent.pillars.map((pillar) => (
+              <StaggerItem key={pillar.title}>
+                <article className="h-full rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur-sm">
+                  <h3 className="text-lg font-bold text-white">{pillar.title}</h3>
+                  <p className="mt-4 text-sm leading-relaxed text-emerald-100/85">{pillar.body}</p>
+                </article>
+              </StaggerItem>
+            ))}
+          </StaggerChildren>
         </div>
       </section>
 
       <OfficeShowcase />
 
       <section className="bg-stone-50 py-20">
-        <div className="mx-auto max-w-7xl px-6">
-          <FadeIn className="text-center">
-            <h2 className="text-3xl font-bold text-emerald-950">Why Choose Us</h2>
+        <div className="mx-auto max-w-4xl px-6 text-center">
+          <FadeIn>
+            <h2 className="text-2xl font-bold text-emerald-950 md:text-3xl">
+              {aboutPageContent.closing.title}
+            </h2>
+            <p className="mt-6 text-lg leading-relaxed text-emerald-900/75">
+              {aboutPageContent.closing.body}
+            </p>
           </FadeIn>
-          <StaggerChildren className="mt-12 grid gap-8 md:grid-cols-3" stagger={0.12}>
-            {reasons.map((item) => (
-              <StaggerItem key={item.title}>
-                <div className="h-full rounded-2xl border border-emerald-900/10 bg-white p-8 transition-shadow hover:shadow-md">
-                  <h3 className="text-lg font-bold text-emerald-950">{item.title}</h3>
-                  <p className="mt-3 text-sm text-emerald-900/70">{item.text}</p>
-                </div>
-              </StaggerItem>
-            ))}
-          </StaggerChildren>
         </div>
       </section>
 

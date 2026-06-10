@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { ProductCatalog } from "@/components/products/ProductCatalog";
 import { PageHero } from "@/components/shared/PageHero";
+import { pageSeo } from "@/data/seo";
 import { siteConfig } from "@/config/site";
+import { seoToMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = seoToMetadata(pageSeo["our-products"], {
   title: "Our Products",
   description: `Browse ${siteConfig.name}'s full catalog of rice, sugar, fertilizer, oils, and metals for export.`,
-};
+});
 
 export default function ProductsPage() {
   return (

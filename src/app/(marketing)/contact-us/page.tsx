@@ -5,12 +5,14 @@ import { OfficeShowcase } from "@/components/sections/OfficeShowcase";
 import { PageHero } from "@/components/shared/PageHero";
 import { FadeIn } from "@/components/shared/FadeIn";
 import { StaggerChildren, StaggerItem } from "@/components/shared/StaggerChildren";
+import { pageSeo } from "@/data/seo";
 import { siteConfig } from "@/config/site";
+import { seoToMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = seoToMetadata(pageSeo["contact-us"], {
   title: "Contact Us",
   description: `Get in touch with ${siteConfig.name} for wholesale quotes on rice, sugar, and fertilizer.`,
-};
+});
 
 const contactItems = [
   {

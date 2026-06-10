@@ -28,7 +28,7 @@ Global Win Co. Ltd's WordPress site (Flatsome + WooCommerce quote model) has bee
 | `/our-products/` | `/our-products/` | Migrated |
 | `/product/{slug}/` | `/product/{slug}/` | 36 products migrated |
 | `/product-category/{cat}/` | `/our-products/{category}/` | Redirected |
-| `/privacy-policy/` | `/privacy-policy/` | Migrated (template) |
+| `/privacy-policy/` | `/privacy-policy/` | Migrated |
 | `/blocks/*` | — | Redirect → `/` (Flatsome demo junk) |
 | `/featured_item/*` | — | Redirect → `/our-products/` (demo junk) |
 | `/shop/*` | — | Redirect → `/our-products/` |
@@ -168,11 +168,11 @@ UX modernized vs Flatsome: cleaner spacing, faster load, mobile-first nav, singl
 **Completed (June 2026):**
 1. Parsed `u196234866_i5Wfk.sql` → `src/data/wp-extracted.json`
 2. Regenerated `src/data/products.ts` with WP titles + HTML descriptions
-3. Scripts: `npm run extract:wp`, `npm run generate:products`
+3. Generated `src/data/pages.ts` with About + Privacy content from WP pages
+4. Generated `src/data/seo.ts` from Rank Math postmeta + title templates in SQL
+5. Scripts: `npm run extract:wp`, `npm run generate:products`, `npm run generate:pages`, `npm run generate:seo`
 
 **Optional follow-up:**
-- Extract Rank Math `_rank_math_*` meta → per-page `metadata`
-- Port privacy-policy HTML from `wp-extracted.json` pages section
 
 **No runtime MySQL required** for the Next.js site.
 

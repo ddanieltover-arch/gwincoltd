@@ -4,16 +4,24 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:studio": "prisma studio",
     "start": "next start",
     "lint": "eslint",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "extract:wp": "node scripts/extract-wp-content.mjs",
     "generate:products": "node scripts/generate-products.mjs",
+    "generate:pages": "node scripts/generate-pages.mjs",
+    "generate:seo": "node scripts/generate-seo.mjs",
     "fix:images": "node scripts/fix-description-images.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
+    "@prisma/client": "^5.18.0",
+    "@supabase/ssr": "^0.10.3",
+    "@supabase/supabase-js": "^2.106.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.40.0",
     "lucide-react": "^1.17.0",
@@ -21,6 +29,7 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-hook-form": "^7.78.0",
+    "server-only": "^0.0.1",
     "tailwind-merge": "^3.6.0",
     "zod": "^4.4.3"
   },
@@ -31,6 +40,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
+    "prisma": "^5.18.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

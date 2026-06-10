@@ -8,8 +8,10 @@ import { ProductContent } from "@/components/sections/ProductContent";
 import { QuoteForm } from "@/components/sections/QuoteForm";
 import { categoryLabels } from "@/config/site";
 import { getAllProductSlugs, getProductBySlug, getRelatedProducts } from "@/data/products";
+import { productSeo } from "@/data/seo";
 import { siteConfig } from "@/config/site";
 import { absoluteImageUrl } from "@/lib/images";
+import { seoToMetadata } from "@/lib/seo";
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
@@ -24,15 +26,19 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   const product = getProductBySlug(slug);
   if (!product) return { title: "Product Not Found" };
 
-  return {
-    title: product.name,
-    description: product.description,
-    openGraph: {
-      title: `${product.name} | ${siteConfig.name}`,
-      description: product.description,
-      images: [{ url: absoluteImageUrl(product.image) }],
+  const seo = productSeo[slug];
+
+  return seoToMetadata(
+    seo,
+    { title: product.name, description: product.description },
+    {
+      openGraph: {
+        title: seo?.title ?? `${product.name} | ${siteConfig.name}`,
+        description: seo?.description ?? product.description,
+        images: [{ url: absoluteImageUrl(product.image) }],
+      },
     },
-  };
+  );
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {

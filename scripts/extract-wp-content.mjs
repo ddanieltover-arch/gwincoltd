@@ -5,7 +5,7 @@ import { fileURLToPath } from "url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const SQL_PATH = path.resolve(
   __dirname,
-  "../../../../sql/u196234866_i5Wfk.sql",
+  "../../../../sql/gwincoltd.sql",
 );
 const OUT_PATH = path.resolve(__dirname, "../src/data/wp-extracted.json");
 
@@ -199,7 +199,7 @@ const pages = posts
 
 const output = {
   extractedAt: new Date().toISOString(),
-  source: "u196234866_i5Wfk.sql",
+  source: "gwincoltd.sql",
   productCount: products.length,
   pageCount: pages.length,
   products,

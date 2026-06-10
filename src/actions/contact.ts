@@ -3,11 +3,23 @@
 import { headers } from "next/headers";
 import { contactSchema, quoteSchema } from "@/lib/validations/contact";
 import { getClientKey, rateLimit } from "@/lib/rate-limit";
+import { storeContactSubmission, storeQuoteSubmission } from "@/lib/submission-store";
 import { escapeHtml } from "@/lib/utils";
 
 type FormResult =
   | { success: true }
   | { error: string; fields?: Record<string, string[]> };
+
+async function getRequestMeta() {
+  const headerList = await headers();
+  return {
+    ipAddress:
+      headerList.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+      headerList.get("x-real-ip") ??
+      undefined,
+    userAgent: headerList.get("user-agent") ?? undefined,
+  };
+}
 
 async function assertRateLimit(action: string): Promise<FormResult | null> {
   const headerList = await headers();
@@ -36,7 +48,7 @@ async function sendEmail(payload: {
   product?: string;
 }): Promise<void> {
   const apiKey = process.env.RESEND_API_KEY;
-  const to = process.env.CONTACT_EMAIL ?? "info@gwincoltd.com";
+  const to = process.env.CONTACT_EMAIL ?? "sales@gwincoltd.com";
   const from = process.env.EMAIL_FROM ?? "noreply@gwincoltd.com";
 
   const safe = {
@@ -97,14 +109,20 @@ export async function submitContactForm(data: unknown): Promise<FormResult> {
   }
 
   try {
-    await sendEmail({
-      type: "contact",
-      name: parsed.data.name,
-      email: parsed.data.email,
-      phone: parsed.data.phone,
-      subject: parsed.data.subject,
-      message: parsed.data.message,
-    });
+    const meta = await getRequestMeta();
+    await Promise.all([
+      sendEmail({
+        type: "contact",
+        name: parsed.data.name,
+        email: parsed.data.email,
+        phone: parsed.data.phone,
+        subject: parsed.data.subject,
+        message: parsed.data.message,
+      }),
+      storeContactSubmission(parsed.data, meta).catch((err) => {
+        console.error("[contact] Failed to store submission:", err);
+      }),
+    ]);
     return { success: true };
   } catch {
     return { error: "Failed to send message. Please try again or contact us via WhatsApp." };
@@ -124,15 +142,21 @@ export async function submitQuoteForm(data: unknown): Promise<FormResult> {
   }
 
   try {
-    await sendEmail({
-      type: "quote",
-      name: parsed.data.name,
-      email: parsed.data.email,
-      phone: parsed.data.phone,
-      subject: parsed.data.subject,
-      message: parsed.data.enquiry,
-      product: parsed.data.product,
-    });
+    const meta = await getRequestMeta();
+    await Promise.all([
+      sendEmail({
+        type: "quote",
+        name: parsed.data.name,
+        email: parsed.data.email,
+        phone: parsed.data.phone,
+        subject: parsed.data.subject,
+        message: parsed.data.enquiry,
+        product: parsed.data.product,
+      }),
+      storeQuoteSubmission(parsed.data, meta).catch((err) => {
+        console.error("[quote] Failed to store submission:", err);
+      }),
+    ]);
     return { success: true };
   } catch {
     return { error: "Failed to send enquiry. Please try again or contact us via WhatsApp." };
