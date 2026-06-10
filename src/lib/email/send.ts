@@ -3,16 +3,34 @@ import { renderAdminEmail, renderUserConfirmationEmail } from "@/lib/email/templ
 import type { FormEmailPayload } from "@/lib/email/types";
 
 function trimEnv(value: string | undefined): string | undefined {
-  const trimmed = value?.trim();
+  if (!value) return undefined;
+
+  let trimmed = value.trim();
+  if (
+    (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+    (trimmed.startsWith("'") && trimmed.endsWith("'"))
+  ) {
+    trimmed = trimmed.slice(1, -1).trim();
+  }
+
   return trimmed || undefined;
+}
+
+function normalizeFromAddress(value: string | undefined): string {
+  const raw = trimEnv(value) ?? "noreply@gwincoltd.com";
+
+  // Allow plain email in Vercel env — wrap with brand display name.
+  if (/^[^\s<>]+@[^\s<>]+\.[^\s<>]+$/.test(raw)) {
+    return `Global Win Co. Ltd <${raw}>`;
+  }
+
+  return raw;
 }
 
 function getEmailConfig() {
   const apiKey = trimEnv(process.env.RESEND_API_KEY);
   const adminTo = trimEnv(process.env.CONTACT_EMAIL) ?? "sales@gwincoltd.com";
-  const from =
-    trimEnv(process.env.EMAIL_FROM) ??
-    `Global Win Co. Ltd <noreply@gwincoltd.com>`;
+  const from = normalizeFromAddress(process.env.EMAIL_FROM);
 
   return { apiKey, adminTo, from };
 }
@@ -50,6 +68,25 @@ async function sendWithResend(
   console.info(`[email] ${label} sent`, { id: data?.id, to: payload.to });
 }
 
+export function getEmailFailureMessage(err: unknown, fallback: string): string {
+  const message = err instanceof Error ? err.message.toLowerCase() : "";
+
+  if (message.includes("resend_api_key") || message.includes("api key")) {
+    return "Our email service is temporarily unavailable. Please contact us via WhatsApp.";
+  }
+
+  if (
+    message.includes("not verified") ||
+    message.includes("verify a domain") ||
+    message.includes("invalid `from`") ||
+    message.includes("invalid from")
+  ) {
+    return "Our email service is still being configured. Please contact us via WhatsApp and we'll respond shortly.";
+  }
+
+  return fallback;
+}
+
 export async function sendFormEmails(payload: FormEmailPayload): Promise<void> {
   const { apiKey, adminTo, from } = getEmailConfig();
   const admin = renderAdminEmail(payload);
@@ -72,7 +109,8 @@ export async function sendFormEmails(payload: FormEmailPayload): Promise<void> {
 
   const resend = new Resend(apiKey);
 
-  // Admin notification first — most important for the business.
+  console.info("[email] sending with from:", from);
+
   await sendWithResend(
     resend,
     {
@@ -86,17 +124,21 @@ export async function sendFormEmails(payload: FormEmailPayload): Promise<void> {
     "admin notification",
   );
 
-  // User confirmation second — if this fails, admin still received the lead.
-  await sendWithResend(
-    resend,
-    {
-      from,
-      to: payload.email,
-      subject: user.subject,
-      html: user.html,
-      text: user.text,
-      replyTo: adminTo,
-    },
-    "user confirmation",
-  );
+  try {
+    await sendWithResend(
+      resend,
+      {
+        from,
+        to: payload.email,
+        subject: user.subject,
+        html: user.html,
+        text: user.text,
+        replyTo: adminTo,
+      },
+      "user confirmation",
+    );
+  } catch (err) {
+    // Admin already has the lead — don't fail the public form for confirmation issues.
+    console.error("[email] user confirmation failed after admin notification:", err);
+  }
 }

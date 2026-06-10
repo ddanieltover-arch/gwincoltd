@@ -1,7 +1,7 @@
 "use server";
 
 import { headers } from "next/headers";
-import { sendFormEmails } from "@/lib/email/send";
+import { getEmailFailureMessage, sendFormEmails } from "@/lib/email/send";
 import { contactSchema, quoteSchema } from "@/lib/validations/contact";
 import { getClientKey, rateLimit } from "@/lib/rate-limit";
 import { storeContactSubmission, storeQuoteSubmission } from "@/lib/submission-store";
@@ -68,7 +68,12 @@ export async function submitContactForm(data: unknown): Promise<FormResult> {
     return { success: true };
   } catch (err) {
     console.error("[contact] Submission failed:", err);
-    return { error: "Failed to send message. Please try again or contact us via WhatsApp." };
+    return {
+      error: getEmailFailureMessage(
+        err,
+        "Failed to send message. Please try again or contact us via WhatsApp.",
+      ),
+    };
   }
 }
 
@@ -103,6 +108,11 @@ export async function submitQuoteForm(data: unknown): Promise<FormResult> {
     return { success: true };
   } catch (err) {
     console.error("[quote] Submission failed:", err);
-    return { error: "Failed to send enquiry. Please try again or contact us via WhatsApp." };
+    return {
+      error: getEmailFailureMessage(
+        err,
+        "Failed to send enquiry. Please try again or contact us via WhatsApp.",
+      ),
+    };
   }
 }
