@@ -95,7 +95,12 @@ export async function sendFormEmails(payload: FormEmailPayload): Promise<void> {
   if (!apiKey) {
     const message =
       "RESEND_API_KEY is not configured. Add it to Vercel Environment Variables and redeploy.";
-    console.error("[email]", message);
+    console.error("[email]", message, {
+      vercel: process.env.VERCEL ?? "0",
+      nodeEnv: process.env.NODE_ENV,
+      hasContactEmail: Boolean(trimEnv(process.env.CONTACT_EMAIL)),
+      hasEmailFrom: Boolean(trimEnv(process.env.EMAIL_FROM)),
+    });
     console.info("[email] Would have sent:");
     console.info("[email] Admin →", adminTo, admin.subject);
     console.info("[email] User →", payload.email, user.subject);
@@ -109,7 +114,11 @@ export async function sendFormEmails(payload: FormEmailPayload): Promise<void> {
 
   const resend = new Resend(apiKey);
 
-  console.info("[email] sending with from:", from);
+  console.info("[email] config", {
+    from,
+    adminTo,
+    apiKeyPrefix: apiKey.slice(0, 8),
+  });
 
   await sendWithResend(
     resend,
