@@ -1,7 +1,4 @@
-"use client";
-
-import { motion, useReducedMotion } from "framer-motion";
-import { easeOut, fadeUp, staggerContainer } from "@/lib/motion";
+import { HeroBackground } from "@/components/shared/HeroBackground";
 
 interface PageHeroProps {
   label?: string;
@@ -10,50 +7,18 @@ interface PageHeroProps {
 }
 
 export function PageHero({ label, title, description }: PageHeroProps) {
-  const reduced = useReducedMotion();
-
   return (
-    <section className="bg-emerald-950 py-16 text-white md:py-20">
-      <motion.div
-        className="mx-auto max-w-7xl px-6"
-        initial="hidden"
-        animate="visible"
-        variants={staggerContainer(0.1, 0)}
-      >
+    <section className="relative overflow-hidden bg-emerald-950 py-16 text-white md:py-20">
+      <HeroBackground />
+
+      <div className="relative mx-auto max-w-7xl px-6">
         {label && (
-          <motion.p
-            variants={fadeUp}
-            transition={{ duration: 0.5, ease: easeOut }}
-            className="text-sm font-semibold uppercase tracking-widest text-emerald-300"
-          >
-            {label}
-          </motion.p>
+          <p className="text-sm font-semibold uppercase tracking-widest text-emerald-300">{label}</p>
         )}
-        <motion.h1
-          variants={fadeUp}
-          transition={{ duration: 0.5, ease: easeOut }}
-          className="mt-4 max-w-3xl text-4xl font-bold md:text-5xl"
-        >
-          {title}
-        </motion.h1>
-        {description && (
-          <motion.p
-            variants={fadeUp}
-            transition={{ duration: 0.5, ease: easeOut }}
-            className="mt-4 max-w-2xl text-emerald-100/80"
-          >
-            {description}
-          </motion.p>
-        )}
-        {!reduced && (
-          <motion.div
-            className="mt-8 h-1 w-16 rounded-full bg-emerald-400"
-            initial={{ width: 0, opacity: 0 }}
-            animate={{ width: 64, opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.6, ease: easeOut }}
-          />
-        )}
-      </motion.div>
+        <h1 className="mt-4 max-w-3xl text-4xl font-bold md:text-5xl">{title}</h1>
+        {description && <p className="mt-4 max-w-2xl text-emerald-100">{description}</p>}
+        <div className="mt-8 h-1 w-16 rounded-full bg-emerald-400" aria-hidden="true" />
+      </div>
     </section>
   );
 }

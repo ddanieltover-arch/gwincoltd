@@ -1,10 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Globe, Shield, Truck } from "lucide-react";
+import { HeroBackground } from "@/components/shared/HeroBackground";
 import { siteConfig } from "@/config/site";
-
-const HERO_IMAGE =
-  "/uploads/2024/12/beautiful-morning-view-indonesia-panorama-landsca-2024-06-10-23-01-11-utc-2048x1365.jpg";
 
 const highlights = [
   { icon: Globe, title: "Global Export", desc: "Serving markets worldwide since 2016" },
@@ -15,36 +12,7 @@ const highlights = [
 export function Hero() {
   return (
     <section className="relative overflow-hidden bg-emerald-950 text-white">
-      {/* Landscape photo — anchored to the right so it stays visible */}
-      <div className="absolute inset-0">
-        <Image
-          src={HERO_IMAGE}
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-right"
-          aria-hidden="true"
-        />
-      </div>
-
-      {/* Left-heavy gradient keeps copy readable; right side stays open for the photo */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(to right, rgb(2 44 34) 0%, rgb(2 44 34 / 0.92) 42%, rgb(2 44 34 / 0.35) 68%, rgb(2 44 34 / 0.08) 100%)",
-        }}
-        aria-hidden="true"
-      />
-      <div
-        className="absolute inset-0 bg-gradient-to-t from-emerald-950/80 via-transparent to-emerald-950/30 md:hidden"
-        aria-hidden="true"
-      />
-      <div
-        className="pointer-events-none absolute -right-16 top-16 h-80 w-80 rounded-full bg-emerald-400/15 blur-3xl"
-        aria-hidden="true"
-      />
+      <HeroBackground priority />
 
       <div className="relative mx-auto grid max-w-7xl gap-12 px-6 py-24 lg:grid-cols-2 lg:items-center lg:py-32">
         <div>
