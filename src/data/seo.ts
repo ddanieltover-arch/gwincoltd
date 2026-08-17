@@ -169,7 +169,11 @@ export const productSeo: Record<string, SeoEntry> = {
   },
   "organic-white-cane-sugar-1-45": {
     "title": "ORGANIC WHITE CANE SUGAR 1-45 - Global Win Co. Ltd",
-    "description": ""
+    "description": "Organic white cane sugar ICUMSA 1-45 from Global Win Co. Ltd — premium export-grade organic sugar for food and beverage manufacturers. Request a wholesale quote.",
+    "robots": {
+      "index": true,
+      "follow": true
+    }
   },
   "zinc-sulfate-heptahydrate": {
     "title": "Zinc Sulfate Heptahydrate - Global Win Co. Ltd",

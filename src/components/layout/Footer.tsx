@@ -35,6 +35,16 @@ export function Footer() {
                 Privacy Policy
               </Link>
             </li>
+            <li>
+              <Link href="/faq" className="text-sm text-emerald-100/80 hover:text-white">
+                FAQ
+              </Link>
+            </li>
+            <li>
+              <Link href="/glossary" className="text-sm text-emerald-100/80 hover:text-white">
+                Glossary
+              </Link>
+            </li>
           </ul>
         </div>
 

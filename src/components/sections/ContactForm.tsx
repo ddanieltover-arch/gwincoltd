@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, Mail, Send } from "lucide-react";
 import { submitContactForm } from "@/actions/contact";
+import { trackContact } from "@/lib/analytics";
 import {
   FormAlert,
   FormField,
@@ -46,6 +47,7 @@ export function ContactForm({ className }: ContactFormProps) {
     const result = await submitContactForm(data);
 
     if ("success" in result && result.success) {
+      trackContact("contact_form");
       setStatus("success");
       reset(defaultValues);
       return;

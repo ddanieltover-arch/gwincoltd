@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
+import { JsonLd } from "@/components/shared/JsonLd";
 import { ScrollToTop } from "@/components/shared/ScrollToTop";
 import "./globals.css";
 import { siteConfig } from "@/config/site";
+import { organizationSchema, websiteSchema } from "@/lib/schema";
+import { absoluteUrl } from "@/lib/urls";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -25,14 +29,14 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: siteConfig.url,
+    url: absoluteUrl("/"),
     siteName: siteConfig.name,
     title: siteConfig.name,
     description: siteConfig.description,
     images: [{ url: siteConfig.logo, alt: `${siteConfig.name} logo` }],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: siteConfig.name,
     description: siteConfig.description,
     images: [siteConfig.logo],
@@ -48,6 +52,8 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} h-full scroll-smooth antialiased`}>
       <body className="flex min-h-full flex-col">
+        <JsonLd data={[organizationSchema(), websiteSchema()]} />
+        <GoogleAnalytics />
         <ScrollToTop />
         {children}
       </body>

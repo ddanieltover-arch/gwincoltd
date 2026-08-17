@@ -9,7 +9,7 @@ export const siteConfig = {
   tagline: "Multi-Commodity Trading from Thailand",
   description:
     "Leading grower, wholesaler, and exporter of rice, sugar, fertilizer, grains, and refined oils. Serving international markets since 2016.",
-  url: "https://gwincoltd.com",
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://gwincoltd.com",
   email: "sales@gwincoltd.com",
   phone: "+66 63 371 6324",
   whatsapp: "66633716324",

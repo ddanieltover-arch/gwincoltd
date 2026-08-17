@@ -2,6 +2,7 @@
 
 import { MessageCircle } from "lucide-react";
 import { siteConfig } from "@/config/site";
+import { trackWhatsAppClick } from "@/lib/analytics";
 import { toWhatsAppDigits } from "@/lib/utils";
 
 export function WhatsAppButton() {
@@ -14,6 +15,7 @@ export function WhatsAppButton() {
         href={url}
         target="_blank"
         rel="noopener noreferrer"
+        onClick={() => trackWhatsAppClick()}
         className="relative flex items-center gap-2 rounded-full bg-emerald-700 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-900/20 transition hover:scale-105 hover:bg-emerald-800"
         aria-label="Chat on WhatsApp"
       >

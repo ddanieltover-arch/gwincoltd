@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FileText, Loader2, Send } from "lucide-react";
 import { submitQuoteForm } from "@/actions/contact";
+import { trackLead } from "@/lib/analytics";
 import {
   FormAlert,
   FormField,
@@ -51,6 +52,7 @@ export function QuoteForm({ productName, className }: QuoteFormProps) {
     const result = await submitQuoteForm(data);
 
     if ("success" in result && result.success) {
+      trackLead("quote_form", productName);
       setStatus("success");
       reset(defaults);
       return;

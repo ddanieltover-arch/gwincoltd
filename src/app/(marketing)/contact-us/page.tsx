@@ -2,17 +2,25 @@ import type { Metadata } from "next";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { ContactForm } from "@/components/sections/ContactForm";
 import { OfficeShowcase } from "@/components/sections/OfficeShowcase";
+import { AnswerCapsule } from "@/components/shared/AnswerCapsule";
+import { JsonLd } from "@/components/shared/JsonLd";
 import { PageHero } from "@/components/shared/PageHero";
 import { FadeIn } from "@/components/shared/FadeIn";
 import { StaggerChildren, StaggerItem } from "@/components/shared/StaggerChildren";
 import { pageSeo } from "@/data/seo";
 import { siteConfig } from "@/config/site";
+import { localBusinessSchema } from "@/lib/schema";
 import { seoToMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = seoToMetadata(pageSeo["contact-us"], {
-  title: "Contact Us",
-  description: `Get in touch with ${siteConfig.name} for wholesale quotes on rice, sugar, and fertilizer.`,
-});
+export const metadata: Metadata = seoToMetadata(
+  pageSeo["contact-us"],
+  {
+    title: "Contact Us",
+    description: `Get in touch with ${siteConfig.name} for wholesale quotes on rice, sugar, and fertilizer.`,
+  },
+  undefined,
+  { path: "/contact-us", ogImage: siteConfig.officeImage },
+);
 
 const contactItems = [
   {
@@ -38,11 +46,21 @@ export default function ContactPage() {
         description="Reach out for wholesale pricing, product availability, and export enquiries."
       />
 
+      <section className="py-12">
+        <div className="mx-auto max-w-7xl px-6">
+          <AnswerCapsule>
+            Contact {siteConfig.name} at {siteConfig.email} or {siteConfig.phone} for wholesale
+            quotes on rice, sugar, fertilizer, oils, and metals. Our export team responds within 24
+            business hours.
+          </AnswerCapsule>
+        </div>
+      </section>
+
       <section className="py-20">
         <div className="mx-auto grid max-w-7xl gap-12 px-6 lg:grid-cols-3">
           <FadeIn direction="right">
             <div className="space-y-6">
-              <h2 className="text-xl font-bold text-emerald-950">Get in Touch</h2>
+              <h2 className="text-xl font-bold text-emerald-950">How can we help?</h2>
               <StaggerChildren className="space-y-6" stagger={0.12}>
                 {contactItems.map(({ icon: Icon, label, value, href }) => (
                   <StaggerItem key={label}>
@@ -73,6 +91,8 @@ export default function ContactPage() {
           </div>
         </div>
       </section>
+
+      <JsonLd data={localBusinessSchema()} />
     </>
   );
 }

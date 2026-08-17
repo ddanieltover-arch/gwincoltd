@@ -145,6 +145,12 @@ function cleanWhitespace(value) {
   return value.replace(/\s+/g, " ").trim();
 }
 
+function truncateMetaDescription(value, max = 160) {
+  const cleaned = cleanWhitespace(value);
+  if (!cleaned || cleaned.length <= max) return cleaned;
+  return `${cleaned.slice(0, max - 3).trimEnd()}...`;
+}
+
 function resolveTemplate(template, vars) {
   if (!template) return "";
   let result = template;
@@ -247,7 +253,7 @@ function buildSeo(post, titleTemplate, descriptionTemplate) {
 
   const entry = {
     title,
-    description: cleanWhitespace(description),
+    description: truncateMetaDescription(cleanWhitespace(description)),
   };
 
   if (meta.rank_math_focus_keyword) {

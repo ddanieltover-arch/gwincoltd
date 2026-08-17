@@ -1,0 +1,39 @@
+name: SEO Validation
+
+on:
+  pull_request:
+    branches: [main, master]
+  push:
+    branches: [main, master]
+
+jobs:
+  seo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate SEO metadata and files
+        run: npm run validate:seo
+
+      - name: Generate SEO audit report
+        run: npm run audit:seo
+
+      - name: Upload audit artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: seo-audit
+          path: seo/
+          retention-days: 30
+
+      - name: Build site
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SITE_URL: https://gwincoltd.com

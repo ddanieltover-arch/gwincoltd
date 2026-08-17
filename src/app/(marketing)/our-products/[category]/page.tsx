@@ -2,9 +2,14 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { ProductCatalog } from "@/components/products/ProductCatalog";
+import { AnswerCapsule } from "@/components/shared/AnswerCapsule";
+import { Breadcrumbs } from "@/components/shared/Breadcrumbs";
+import { JsonLd } from "@/components/shared/JsonLd";
 import { PageHero } from "@/components/shared/PageHero";
+import { categoryContent } from "@/data/category-content";
 import { categoryDescriptions, categoryLabels, productCategories } from "@/config/site";
 import { categorySeo } from "@/data/seo";
+import { breadcrumbSchema } from "@/lib/schema";
 import { seoToMetadata } from "@/lib/seo";
 import type { ProductCategory } from "@/types";
 
@@ -23,10 +28,15 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
   }
 
   const key = category as ProductCategory;
-  return seoToMetadata(categorySeo[key], {
-    title: categoryLabels[key],
-    description: categoryDescriptions[key],
-  });
+  return seoToMetadata(
+    categorySeo[key],
+    {
+      title: categoryLabels[key],
+      description: categoryDescriptions[key],
+    },
+    undefined,
+    { path: `/our-products/${key}` },
+  );
 }
 
 export default async function CategoryProductsPage({ params }: CategoryPageProps) {
@@ -37,13 +47,41 @@ export default async function CategoryProductsPage({ params }: CategoryPageProps
   }
 
   const key = category as ProductCategory;
+  const content = categoryContent[key];
+  const breadcrumbs = [
+    { name: "Home", path: "/" },
+    { name: "Our Products", path: "/our-products" },
+    { name: categoryLabels[key], path: `/our-products/${key}` },
+  ];
 
   return (
     <>
+      <Breadcrumbs items={breadcrumbs} />
+
       <PageHero
         title={categoryLabels[key]}
         description={categoryDescriptions[key]}
       />
+
+      <section className="py-12">
+        <div className="mx-auto max-w-7xl space-y-8 px-6">
+          <AnswerCapsule>{content.answerCapsule}</AnswerCapsule>
+          <div>
+            <h2 className="text-xl font-bold text-emerald-950">
+              Why source {categoryLabels[key].toLowerCase()} from Thailand?
+            </h2>
+            <p className="mt-4 max-w-3xl leading-relaxed text-emerald-900/80">{content.intro}</p>
+            <ul className="mt-6 grid gap-3 sm:grid-cols-2">
+              {content.highlights.map((item) => (
+                <li key={item} className="flex gap-2 text-sm text-emerald-900/80">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-600" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
 
       <section className="py-16">
         <div className="mx-auto max-w-7xl px-6">
@@ -52,6 +90,8 @@ export default async function CategoryProductsPage({ params }: CategoryPageProps
           </Suspense>
         </div>
       </section>
+
+      <JsonLd data={breadcrumbSchema(breadcrumbs)} />
     </>
   );
 }

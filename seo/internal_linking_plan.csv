@@ -1,0 +1,22 @@
+From Page,To Page,Anchor Text,Priority
+/,/our-products/rice/,Thai rice export,High
+/,/our-products/sugar/,ICUMSA certified sugar,High
+/,/our-products/fertilizer/,NPK fertilizer wholesale,High
+/,/faq/,Export FAQ,Medium
+/about-us/,/our-products/,Browse our product catalog,High
+/about-us/,/contact-us/,Request a wholesale quote,High
+/about-us/,/faq/,Commodity export questions,Medium
+/our-products/,/our-products/rice/,Rice varieties,High
+/our-products/,/our-products/sugar/,Sugar grades,High
+/our-products/,/our-products/fertilizer/,Fertilizer products,High
+/our-products/rice/,/product/jasmine-rice-thai-hom-mali/,Thai Hom Mali Jasmine rice,High
+/our-products/sugar/,/product/icumsa-45-white-refined-sugar/,ICUMSA 45 white refined sugar,High
+/our-products/fertilizer/,/product/urea/,Urea fertilizer,High
+/product/icumsa-45-white-refined-sugar/,/our-products/sugar/,All sugar products,High
+/product/icumsa-45-white-refined-sugar/,/glossary/,What is ICUMSA?,Medium
+/product/icumsa-45-white-refined-sugar/,/faq/,Sugar export FAQ,Medium
+/faq/,/glossary/,Commodity glossary,Medium
+/faq/,/contact-us/,Contact export team,High
+/glossary/,/faq/,Export FAQ,Medium
+/glossary/,/our-products/,Product catalog,High
+/contact-us/,/faq/,Frequently asked questions,Medium

@@ -4,19 +4,27 @@ import Link from "next/link";
 import { CTABanner } from "@/components/sections/CTABanner";
 import { OperationsGallery } from "@/components/sections/OperationsGallery";
 import { OfficeShowcase } from "@/components/sections/OfficeShowcase";
+import { AnswerCapsule } from "@/components/shared/AnswerCapsule";
+import { JsonLd } from "@/components/shared/JsonLd";
 import { PageHero } from "@/components/shared/PageHero";
 import { FadeIn } from "@/components/shared/FadeIn";
 import { StaggerChildren, StaggerItem } from "@/components/shared/StaggerChildren";
 import { siteConfig } from "@/config/site";
 import { aboutPageContent } from "@/data/pages";
 import { pageSeo } from "@/data/seo";
+import { localBusinessSchema } from "@/lib/schema";
 import { upload } from "@/lib/images";
 import { seoToMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = seoToMetadata(pageSeo["about-us"], {
-  title: "About Us",
-  description: `Learn about ${siteConfig.name} — a leading multi-commodity trading company based in Thailand.`,
-});
+export const metadata: Metadata = seoToMetadata(
+  pageSeo["about-us"],
+  {
+    title: "About Us",
+    description: `Learn about ${siteConfig.name} — a leading multi-commodity trading company based in Thailand.`,
+  },
+  undefined,
+  { path: "/about-us", ogImage: siteConfig.officeImage },
+);
 
 const ABOUT_IMAGE = upload(
   "2024/12/rice-terraces-hills-and-blue-sky-2024-11-29-02-37-33-utc-scaled.jpg",
@@ -38,6 +46,16 @@ export default function AboutPage() {
         description={aboutPageContent.intro}
       />
 
+      <section className="py-12">
+        <div className="mx-auto max-w-7xl px-6">
+          <AnswerCapsule>
+            {siteConfig.name} has operated from Yala, Thailand since {siteConfig.founded}, exporting
+            rice, sugar, fertilizer, oils, and metals to international markets with GMP, HACCP, and
+            Global GAP aligned quality standards.
+          </AnswerCapsule>
+        </div>
+      </section>
+
       <section className="py-20">
         <div className="mx-auto grid max-w-7xl items-center gap-12 px-6 lg:grid-cols-2">
           <FadeIn direction="right">
@@ -53,7 +71,7 @@ export default function AboutPage() {
           </FadeIn>
           <FadeIn direction="left" delay={0.1}>
             <div className="space-y-6 text-emerald-900/80">
-              <h2 className="text-2xl font-bold text-emerald-950">{siteConfig.name}</h2>
+              <h2 className="text-2xl font-bold text-emerald-950">Who is {siteConfig.name}?</h2>
               <p className="text-lg leading-relaxed">{aboutPageContent.intro}</p>
               {companyIntro && companyIntro !== aboutPageContent.intro && (
                 <p className="leading-relaxed">{companyIntro}</p>
@@ -71,6 +89,12 @@ export default function AboutPage() {
                 >
                   Contact Us
                 </Link>
+                <Link
+                  href="/faq"
+                  className="inline-flex items-center justify-center rounded-full border border-emerald-700/50 px-6 py-2.5 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-50"
+                >
+                  Export FAQ
+                </Link>
               </div>
             </div>
           </FadeIn>
@@ -79,6 +103,7 @@ export default function AboutPage() {
 
       <section className="bg-emerald-950 py-20 text-white">
         <div className="mx-auto max-w-7xl px-6">
+          <h2 className="sr-only">Our core values</h2>
           <StaggerChildren className="grid gap-8 md:grid-cols-2 lg:grid-cols-3" stagger={0.1}>
             {aboutPageContent.pillars.map((pillar) => (
               <StaggerItem key={pillar.title}>
@@ -108,8 +133,8 @@ export default function AboutPage() {
       </section>
 
       <OperationsGallery variant="about" />
-
       <CTABanner />
+      <JsonLd data={localBusinessSchema()} />
     </>
   );
 }

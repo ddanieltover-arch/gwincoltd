@@ -1,0 +1,212 @@
+{
+  "generatedAt": "2026-08-17T09:20:38.388Z",
+  "site": "https://gwincoltd.com",
+  "totalUrls": 48,
+  "indexableUrls": 48,
+  "issues": [
+    {
+      "url": "/faq/",
+      "issue": "missing_title"
+    },
+    {
+      "url": "/faq/",
+      "issue": "missing_description"
+    },
+    {
+      "url": "/glossary/",
+      "issue": "missing_title"
+    },
+    {
+      "url": "/glossary/",
+      "issue": "missing_description"
+    },
+    {
+      "url": "/product/1121-sella-basmati-rice/",
+      "issue": "description_too_long",
+      "length": 1530
+    },
+    {
+      "url": "/product/aluminum-ingot-a7/",
+      "issue": "description_too_long",
+      "length": 345
+    },
+    {
+      "url": "/product/ammonium-sulfate/",
+      "issue": "description_too_long",
+      "length": 320
+    },
+    {
+      "url": "/product/arborio-rice/",
+      "issue": "description_too_long",
+      "length": 921
+    },
+    {
+      "url": "/product/automotive-urea/",
+      "issue": "description_too_long",
+      "length": 427
+    },
+    {
+      "url": "/product/beet-sugar/",
+      "issue": "description_too_long",
+      "length": 320
+    },
+    {
+      "url": "/product/copper-cathode/",
+      "issue": "description_too_long",
+      "length": 247
+    },
+    {
+      "url": "/product/dap-diammonium-phosphate/",
+      "issue": "description_too_long",
+      "length": 369
+    },
+    {
+      "url": "/product/glutinous-rice/",
+      "issue": "description_too_long",
+      "length": 987
+    },
+    {
+      "url": "/product/icumsa-100-cane-sugar/",
+      "issue": "description_too_long",
+      "length": 320
+    },
+    {
+      "url": "/product/icumsa-150-cane-sugar/",
+      "issue": "description_too_long",
+      "length": 320
+    },
+    {
+      "url": "/product/icumsa-45-white-refined-sugar/",
+      "issue": "description_too_long",
+      "length": 320
+    },
+    {
+      "url": "/product/icumsa-600-1200-brown-sugar-2/",
+      "issue": "description_too_long",
+      "length": 320
+    },
+    {
+      "url": "/product/japonica-rice/",
+      "issue": "description_too_long",
+      "length": 1013
+    },
+    {
+      "url": "/product/jasmine-rice-thai-hom-mali/",
+      "issue": "description_too_long",
+      "length": 1017
+    },
+    {
+      "url": "/product/mapmonoammonium-phosphate/",
+      "issue": "description_too_long",
+      "length": 241
+    },
+    {
+      "url": "/product/monopotassium-phosphate/",
+      "issue": "description_too_long",
+      "length": 320
+    },
+    {
+      "url": "/product/nitrogen-fertilizer/",
+      "issue": "description_too_long",
+      "length": 319
+    },
+    {
+      "url": "/product/npk/",
+      "issue": "description_too_long",
+      "length": 504
+    },
+    {
+      "url": "/product/organic-white-cane-sugar-1-45/",
+      "issue": "description_too_long",
+      "length": 161
+    },
+    {
+      "url": "/product/quality-brown-rice/",
+      "issue": "description_too_long",
+      "length": 1190
+    },
+    {
+      "url": "/product/refined-brown-sugar-icumsa-600-1200/",
+      "issue": "description_too_long",
+      "length": 386
+    },
+    {
+      "url": "/product/refined-soybean-oil/",
+      "issue": "description_too_long",
+      "length": 480
+    },
+    {
+      "url": "/product/refined-white-sugar-icumsa-150/",
+      "issue": "description_too_long",
+      "length": 319
+    },
+    {
+      "url": "/product/superphosphate/",
+      "issue": "description_too_long",
+      "length": 394
+    },
+    {
+      "url": "/product/thai-hom-patum-rice/",
+      "issue": "description_too_long",
+      "length": 304
+    },
+    {
+      "url": "/product/thai-jasmine-black-cargo-rice/",
+      "issue": "description_too_long",
+      "length": 288
+    },
+    {
+      "url": "/product/thai-jasmine-red-cargo-rice/",
+      "issue": "description_too_long",
+      "length": 350
+    },
+    {
+      "url": "/product/thai-long-grain-rice/",
+      "issue": "description_too_long",
+      "length": 719
+    },
+    {
+      "url": "/product/thai-parboiled-rice/",
+      "issue": "description_too_long",
+      "length": 885
+    },
+    {
+      "url": "/product/urea/",
+      "issue": "description_too_long",
+      "length": 1269
+    },
+    {
+      "url": "/product/vhp-sugar/",
+      "issue": "description_too_long",
+      "length": 320
+    },
+    {
+      "url": "/product/zinc-sulfate-heptahydrate/",
+      "issue": "description_too_long",
+      "length": 504
+    }
+  ],
+  "issueCount": 37,
+  "sitemapTrailingSlashAligned": true,
+  "hasLlmsTxt": true,
+  "hasRobotsTxt": true,
+  "hasSitemap": true,
+  "schemaImplemented": [
+    "Organization",
+    "WebSite",
+    "Product",
+    "LocalBusiness",
+    "BreadcrumbList",
+    "FAQPage",
+    "DefinedTermSet"
+  ],
+  "schemaMissing": [],
+  "analyticsConfigured": false,
+  "gscConnected": false,
+  "recommendations": [
+    "Optimize LCP — preload hero image, reduce above-fold JS",
+    "Submit sitemap to Google Search Console after deploy",
+    "Set NEXT_PUBLIC_GA_MEASUREMENT_ID for GA4 tracking",
+    "Claim and optimize Google Business Profile for Yala HQ"
+  ]
+}

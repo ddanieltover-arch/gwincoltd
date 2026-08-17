@@ -1,0 +1,14 @@
+---
+description: Pulse B2B Admin CMS — use kit structure for /admin; brand tokens from this project only
+alwaysApply: false
+---
+
+# Pulse B2B Admin CMS
+
+When building, extending, or refactoring `/admin` (dashboard, CMS, quotes, inquiries, partners):
+
+1. Read `pulse-b2b-admin-cms/SKILL.md` and `pulse-b2b-admin-cms/project-config.md` (fill config if empty).
+2. Follow kit references for architecture, modules, file tree, page patterns, and Prisma core.
+3. Use **this project’s** brand CSS tokens / Tailwind classes — never copy another client’s colors or `tg-*` classes unless this project is TG.
+4. Keep layers: pages → components/admin → actions/admin* → services → Prisma; Auth.js + `lib/adminAuth` role gates.
+5. Prefer the kit IA (Dashboard, Quotes, Inquiries, Products, Dealers, Distributors, optional Certifications/Pages) over inventing a new shell.

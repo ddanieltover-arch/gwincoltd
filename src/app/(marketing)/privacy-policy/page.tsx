@@ -9,10 +9,15 @@ import { privacyPageContent } from "@/data/pages";
 import { pageSeo } from "@/data/seo";
 import { seoToMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = seoToMetadata(pageSeo["privacy-policy"], {
-  title: "Privacy Policy",
-  description: `How ${siteConfig.name} collects, uses, and protects your personal information.`,
-});
+export const metadata: Metadata = seoToMetadata(
+  pageSeo["privacy-policy"],
+  {
+    title: "Privacy Policy",
+    description: `How ${siteConfig.name} collects, uses, and protects your personal information.`,
+  },
+  undefined,
+  { path: "/privacy-policy" },
+);
 
 const lastUpdated = "June 2026";
 
