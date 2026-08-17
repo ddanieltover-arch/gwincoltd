@@ -8,10 +8,11 @@ import { QuoteForm } from "@/components/sections/QuoteForm";
 import { AnswerCapsule } from "@/components/shared/AnswerCapsule";
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs";
 import { JsonLd } from "@/components/shared/JsonLd";
+import { RelatedResources } from "@/components/shared/RelatedResources";
 import { categoryLabels } from "@/config/site";
 import { getAllProductSlugs, getProductBySlug, getRelatedProducts } from "@/data/products";
+import { getProductRelatedResources, categoryKeywordAnchors, homepageKeywordByTopic } from "@/data/related-links";
 import { productSeo } from "@/data/seo";
-import { siteConfig } from "@/config/site";
 import { absoluteImageUrl } from "@/lib/images";
 import { breadcrumbSchema, productSchema } from "@/lib/schema";
 import { seoToMetadata } from "@/lib/seo";
@@ -88,6 +89,20 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <div className="mt-6">
               <AnswerCapsule>{answerText}</AnswerCapsule>
             </div>
+            <p className="mt-4 text-sm text-emerald-800/80">
+              This product is part of our{" "}
+              <Link href="/" className="font-medium text-emerald-700 hover:underline">
+                {homepageKeywordByTopic[product.category]}
+              </Link>{" "}
+              offering. Compare related{" "}
+              <Link
+                href={`/our-products/${product.category}`}
+                className="font-medium text-emerald-700 hover:underline"
+              >
+                {categoryKeywordAnchors[product.category]}
+              </Link>{" "}
+              options.
+            </p>
             <p className="mt-6 text-sm text-emerald-800/70">
               Request a wholesale quote for pricing, minimum order quantities, and shipping
               arrangements. Our team typically responds within 24 hours.
@@ -143,6 +158,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </Link>
         </div>
       </section>
+
+      <RelatedResources {...getProductRelatedResources(product)} />
 
       <JsonLd
         data={[

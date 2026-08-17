@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Mail } from "lucide-react";
 import { PageHero } from "@/components/shared/PageHero";
+import { RelatedResources } from "@/components/shared/RelatedResources";
 import { FadeIn } from "@/components/shared/FadeIn";
 import { StaggerChildren, StaggerItem } from "@/components/shared/StaggerChildren";
 import { siteConfig } from "@/config/site";
 import { privacyPageContent } from "@/data/pages";
 import { pageSeo } from "@/data/seo";
+import { staticRelatedResources } from "@/data/related-links";
 import { seoToMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = seoToMetadata(
@@ -126,6 +128,8 @@ export default function PrivacyPolicyPage() {
           </FadeIn>
         </div>
       </section>
+
+      <RelatedResources {...staticRelatedResources["privacy-policy"]} />
     </>
   );
 }

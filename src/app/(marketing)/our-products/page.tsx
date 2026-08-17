@@ -3,9 +3,11 @@ import { Suspense } from "react";
 import { ProductCatalog } from "@/components/products/ProductCatalog";
 import { AnswerCapsule } from "@/components/shared/AnswerCapsule";
 import { PageHero } from "@/components/shared/PageHero";
+import { RelatedResources } from "@/components/shared/RelatedResources";
 import { products } from "@/data/products";
 import { pageSeo } from "@/data/seo";
 import { siteConfig } from "@/config/site";
+import { staticRelatedResources } from "@/data/related-links";
 import { seoToMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = seoToMetadata(
@@ -43,6 +45,8 @@ export default function ProductsPage() {
           </Suspense>
         </div>
       </section>
+
+      <RelatedResources {...staticRelatedResources["our-products"]} />
     </>
   );
 }

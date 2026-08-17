@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { ContactForm } from "@/components/sections/ContactForm";
 import { OfficeShowcase } from "@/components/sections/OfficeShowcase";
 import { AnswerCapsule } from "@/components/shared/AnswerCapsule";
+import { RelatedResources } from "@/components/shared/RelatedResources";
 import { JsonLd } from "@/components/shared/JsonLd";
 import { PageHero } from "@/components/shared/PageHero";
 import { FadeIn } from "@/components/shared/FadeIn";
@@ -10,6 +12,7 @@ import { StaggerChildren, StaggerItem } from "@/components/shared/StaggerChildre
 import { pageSeo } from "@/data/seo";
 import { siteConfig } from "@/config/site";
 import { localBusinessSchema } from "@/lib/schema";
+import { staticRelatedResources } from "@/data/related-links";
 import { seoToMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = seoToMetadata(
@@ -50,8 +53,19 @@ export default function ContactPage() {
         <div className="mx-auto max-w-7xl px-6">
           <AnswerCapsule>
             Contact {siteConfig.name} at {siteConfig.email} or {siteConfig.phone} for wholesale
-            quotes on rice, sugar, fertilizer, oils, and metals. Our export team responds within 24
-            business hours.
+            quotes on{" "}
+            <Link href="/our-products/rice" className="font-semibold underline decoration-emerald-300 underline-offset-2 hover:text-emerald-800">
+              Thai jasmine rice
+            </Link>
+            ,{" "}
+            <Link href="/our-products/sugar" className="font-semibold underline decoration-emerald-300 underline-offset-2 hover:text-emerald-800">
+              ICUMSA 45 white sugar
+            </Link>
+            , and{" "}
+            <Link href="/our-products/fertilizer" className="font-semibold underline decoration-emerald-300 underline-offset-2 hover:text-emerald-800">
+              NPK fertilizer
+            </Link>
+            . Our export team responds within 24 business hours.
           </AnswerCapsule>
         </div>
       </section>
@@ -92,6 +106,7 @@ export default function ContactPage() {
         </div>
       </section>
 
+      <RelatedResources {...staticRelatedResources["contact-us"]} />
       <JsonLd data={localBusinessSchema()} />
     </>
   );

@@ -5,6 +5,7 @@ import { CTABanner } from "@/components/sections/CTABanner";
 import { OperationsGallery } from "@/components/sections/OperationsGallery";
 import { OfficeShowcase } from "@/components/sections/OfficeShowcase";
 import { AnswerCapsule } from "@/components/shared/AnswerCapsule";
+import { RelatedResources } from "@/components/shared/RelatedResources";
 import { JsonLd } from "@/components/shared/JsonLd";
 import { PageHero } from "@/components/shared/PageHero";
 import { FadeIn } from "@/components/shared/FadeIn";
@@ -14,6 +15,7 @@ import { aboutPageContent } from "@/data/pages";
 import { pageSeo } from "@/data/seo";
 import { localBusinessSchema } from "@/lib/schema";
 import { upload } from "@/lib/images";
+import { staticRelatedResources } from "@/data/related-links";
 import { seoToMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = seoToMetadata(
@@ -49,9 +51,19 @@ export default function AboutPage() {
       <section className="py-12">
         <div className="mx-auto max-w-7xl px-6">
           <AnswerCapsule>
-            {siteConfig.name} has operated from Yala, Thailand since {siteConfig.founded}, exporting
-            rice, sugar, fertilizer, oils, and metals to international markets with GMP, HACCP, and
-            Global GAP aligned quality standards.
+            {siteConfig.name} has operated from Yala, Thailand since {siteConfig.founded}, exporting{" "}
+            <Link href="/our-products/rice" className="font-semibold underline decoration-emerald-300 underline-offset-2 hover:text-emerald-800">
+              Thai jasmine rice
+            </Link>
+            ,{" "}
+            <Link href="/our-products/sugar" className="font-semibold underline decoration-emerald-300 underline-offset-2 hover:text-emerald-800">
+              ICUMSA-certified sugar
+            </Link>
+            , and{" "}
+            <Link href="/our-products/fertilizer" className="font-semibold underline decoration-emerald-300 underline-offset-2 hover:text-emerald-800">
+              NPK fertilizer
+            </Link>{" "}
+            to international markets with GMP, HACCP, and Global GAP aligned quality standards.
           </AnswerCapsule>
         </div>
       </section>
@@ -133,6 +145,7 @@ export default function AboutPage() {
       </section>
 
       <OperationsGallery variant="about" />
+      <RelatedResources {...staticRelatedResources["about-us"]} />
       <CTABanner />
       <JsonLd data={localBusinessSchema()} />
     </>

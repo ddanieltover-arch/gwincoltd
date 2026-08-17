@@ -3,8 +3,10 @@ import Link from "next/link";
 import { AnswerCapsule } from "@/components/shared/AnswerCapsule";
 import { JsonLd } from "@/components/shared/JsonLd";
 import { PageHero } from "@/components/shared/PageHero";
+import { RelatedResources } from "@/components/shared/RelatedResources";
 import { glossaryEntries } from "@/data/glossary";
 import { definedTermSetSchema } from "@/lib/schema";
+import { staticRelatedResources } from "@/data/related-links";
 import { seoToMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = seoToMetadata(
@@ -31,9 +33,16 @@ export default function GlossaryPage() {
       <section className="py-16">
         <div className="mx-auto max-w-4xl space-y-10 px-6">
           <AnswerCapsule>
-            This glossary defines essential terms used in agricultural commodity export — including
-            ICUMSA sugar grades, rice varieties, fertilizer types, and international shipping
-            Incoterms — to help importers and traders understand product specifications.
+            This glossary defines essential terms used in agricultural commodity export — including{" "}
+            <Link href="/product/icumsa-45-white-refined-sugar" className="font-semibold underline decoration-emerald-300 underline-offset-2 hover:text-emerald-800">
+              ICUMSA 45 white sugar wholesale
+            </Link>
+            ,{" "}
+            <Link href="/product/jasmine-rice-thai-hom-mali" className="font-semibold underline decoration-emerald-300 underline-offset-2 hover:text-emerald-800">
+              Thai jasmine rice (Hom Mali) export
+            </Link>
+            , fertilizer types, and international shipping Incoterms — to help importers understand
+            product specifications.
           </AnswerCapsule>
 
           <dl className="space-y-8">
@@ -64,6 +73,8 @@ export default function GlossaryPage() {
           </aside>
         </div>
       </section>
+
+      <RelatedResources {...staticRelatedResources.glossary} />
 
       <JsonLd
         data={definedTermSetSchema(

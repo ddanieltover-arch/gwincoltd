@@ -3,9 +3,11 @@ import Link from "next/link";
 import { AnswerCapsule } from "@/components/shared/AnswerCapsule";
 import { JsonLd } from "@/components/shared/JsonLd";
 import { PageHero } from "@/components/shared/PageHero";
+import { RelatedResources } from "@/components/shared/RelatedResources";
 import { faqCategories, faqEntries } from "@/data/faq";
 import { siteConfig } from "@/config/site";
 import { faqPageSchema } from "@/lib/schema";
+import { staticRelatedResources } from "@/data/related-links";
 import { seoToMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = seoToMetadata(
@@ -35,8 +37,15 @@ export default function FaqPage() {
         <div className="mx-auto max-w-4xl space-y-12 px-6">
           <AnswerCapsule>
             {siteConfig.name} is a Thailand-based B2B exporter of rice, sugar, fertilizer, oils, and
-            metals. Request quotes via product pages or contact us — we respond within 24 business
-            hours with pricing, MOQ, and shipping options.
+            metals. Request quotes via{" "}
+            <Link href="/our-products" className="font-semibold underline decoration-emerald-300 underline-offset-2 hover:text-emerald-800">
+              wholesale rice sugar fertilizer catalog
+            </Link>{" "}
+            pages or{" "}
+            <Link href="/contact-us" className="font-semibold underline decoration-emerald-300 underline-offset-2 hover:text-emerald-800">
+              wholesale quote for export
+            </Link>{" "}
+            — we respond within 24 business hours with pricing, MOQ, and shipping options.
           </AnswerCapsule>
 
           {faqCategories.map(({ id, label }) => {
@@ -79,6 +88,8 @@ export default function FaqPage() {
           </aside>
         </div>
       </section>
+
+      <RelatedResources {...staticRelatedResources.faq} />
 
       <JsonLd data={faqPageSchema(schemaFaqs)} />
     </>

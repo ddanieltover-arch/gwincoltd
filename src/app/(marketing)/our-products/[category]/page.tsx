@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { ProductCatalog } from "@/components/products/ProductCatalog";
@@ -6,7 +7,9 @@ import { AnswerCapsule } from "@/components/shared/AnswerCapsule";
 import { Breadcrumbs } from "@/components/shared/Breadcrumbs";
 import { JsonLd } from "@/components/shared/JsonLd";
 import { PageHero } from "@/components/shared/PageHero";
+import { RelatedResources } from "@/components/shared/RelatedResources";
 import { categoryContent } from "@/data/category-content";
+import { getCategoryRelatedResources, homepageKeywordByTopic } from "@/data/related-links";
 import { categoryDescriptions, categoryLabels, productCategories } from "@/config/site";
 import { categorySeo } from "@/data/seo";
 import { breadcrumbSchema } from "@/lib/schema";
@@ -79,6 +82,25 @@ export default async function CategoryProductsPage({ params }: CategoryPageProps
                 </li>
               ))}
             </ul>
+            <p className="mt-6 max-w-3xl text-sm leading-relaxed text-emerald-900/80">
+              Importers comparing{" "}
+              <Link href="/" className="font-medium text-emerald-700 hover:underline">
+                {homepageKeywordByTopic[key]}
+              </Link>{" "}
+              can also review our{" "}
+              <Link href="/faq" className="font-medium text-emerald-700 hover:underline">
+                {key === "sugar"
+                  ? "ICUMSA 45 vs ICUMSA 150"
+                  : key === "fertilizer"
+                    ? "NPK fertilizer grades available"
+                    : "how to import rice from Thailand"}
+              </Link>{" "}
+              and the{" "}
+              <Link href="/glossary" className="font-medium text-emerald-700 hover:underline">
+                commodity export glossary
+              </Link>
+              .
+            </p>
           </div>
         </div>
       </section>
@@ -91,6 +113,7 @@ export default async function CategoryProductsPage({ params }: CategoryPageProps
         </div>
       </section>
 
+      <RelatedResources {...getCategoryRelatedResources(key)} />
       <JsonLd data={breadcrumbSchema(breadcrumbs)} />
     </>
   );

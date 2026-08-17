@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { AnswerCapsule } from "@/components/shared/AnswerCapsule";
+import { RelatedResources } from "@/components/shared/RelatedResources";
 import { CategoryShowcase } from "@/components/sections/CategoryShowcase";
 import { CTABanner } from "@/components/sections/CTABanner";
 import { Hero } from "@/components/sections/Hero";
@@ -11,6 +12,7 @@ import { ProductGrid } from "@/components/products/ProductGrid";
 import { products } from "@/data/products";
 import { pageSeo } from "@/data/seo";
 import { siteConfig } from "@/config/site";
+import { staticRelatedResources } from "@/data/related-links";
 import { seoToMetadata } from "@/lib/seo";
 
 export const metadata = seoToMetadata(
@@ -33,9 +35,20 @@ export default function HomePage() {
       <section className="py-12">
         <div className="mx-auto max-w-7xl px-6">
           <AnswerCapsule>
-            {siteConfig.name} is a Thailand-based B2B exporter of rice, sugar, fertilizer, refined
-            oils, and metals — supplying certified agricultural commodities to international
-            importers and wholesalers since {siteConfig.founded}.
+            {siteConfig.name} is a Thailand-based B2B exporter of{" "}
+            <Link href="/our-products/rice" className="font-semibold underline decoration-emerald-300 underline-offset-2 hover:text-emerald-800">
+              Thai jasmine rice
+            </Link>
+            ,{" "}
+            <Link href="/our-products/sugar" className="font-semibold underline decoration-emerald-300 underline-offset-2 hover:text-emerald-800">
+              ICUMSA 45 white sugar
+            </Link>
+            , and{" "}
+            <Link href="/our-products/fertilizer" className="font-semibold underline decoration-emerald-300 underline-offset-2 hover:text-emerald-800">
+              NPK fertilizer
+            </Link>{" "}
+            — plus refined oils and metals — supplying certified agricultural commodities to
+            international importers since {siteConfig.founded}.
           </AnswerCapsule>
         </div>
       </section>
@@ -60,6 +73,7 @@ export default function HomePage() {
         </div>
       </section>
 
+      <RelatedResources {...staticRelatedResources.home} />
       <CTABanner />
     </>
   );
