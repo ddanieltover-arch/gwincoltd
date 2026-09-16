@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, Mail, Send } from "lucide-react";
@@ -13,6 +13,7 @@ import {
   formInputClass,
 } from "@/components/forms/FormField";
 import { SpamTrap } from "@/components/forms/SpamTrap";
+import { TurnstileField } from "@/components/forms/TurnstileField";
 import { contactSchema, type ContactFormData } from "@/lib/validations/contact";
 import { cn } from "@/lib/utils";
 
@@ -33,6 +34,9 @@ export function ContactForm({ className }: ContactFormProps) {
   const [serverError, setServerError] = useState<string | null>(null);
   const startedAt = useRef(Date.now());
   const websiteRef = useRef<HTMLInputElement>(null);
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstileReset, setTurnstileReset] = useState(0);
+  const onTurnstileToken = useCallback((token: string) => setTurnstileToken(token), []);
 
   const {
     register,
@@ -47,11 +51,20 @@ export function ContactForm({ className }: ContactFormProps) {
   const onSubmit = async (data: ContactFormData) => {
     setStatus("idle");
     setServerError(null);
+    if (!turnstileToken) {
+      setStatus("error");
+      setServerError("Please complete the security check and try again.");
+      return;
+    }
+
     const result = await submitContactForm({
       ...data,
       companyWebsite: websiteRef.current?.value ?? "",
       formStartedAt: startedAt.current,
+      turnstileToken,
     });
+    setTurnstileToken("");
+    setTurnstileReset((count) => count + 1);
 
     if ("success" in result && result.success) {
       trackContact("contact_form");
@@ -123,6 +136,12 @@ export function ContactForm({ className }: ContactFormProps) {
             />
           </FormField>
 
+          <TurnstileField
+            action="contact"
+            resetSignal={turnstileReset}
+            onToken={onTurnstileToken}
+          />
+
           {status === "success" && (
             <FormAlert
               variant="success"
@@ -140,7 +159,7 @@ export function ContactForm({ className }: ContactFormProps) {
 
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || !turnstileToken}
             className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-700 px-6 py-3.5 text-sm font-semibold text-white shadow-md shadow-emerald-900/15 transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60 md:w-auto"
           >
             {isSubmitting ? (

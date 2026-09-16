@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FileText, Loader2, Send } from "lucide-react";
@@ -13,6 +13,7 @@ import {
   formInputClass,
 } from "@/components/forms/FormField";
 import { SpamTrap } from "@/components/forms/SpamTrap";
+import { TurnstileField } from "@/components/forms/TurnstileField";
 import { quoteSchema, type QuoteFormData } from "@/lib/validations/contact";
 import { cn } from "@/lib/utils";
 
@@ -38,6 +39,9 @@ export function QuoteForm({ productName, className }: QuoteFormProps) {
   const [serverError, setServerError] = useState<string | null>(null);
   const startedAt = useRef(Date.now());
   const websiteRef = useRef<HTMLInputElement>(null);
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstileReset, setTurnstileReset] = useState(0);
+  const onTurnstileToken = useCallback((token: string) => setTurnstileToken(token), []);
 
   const {
     register,
@@ -52,11 +56,20 @@ export function QuoteForm({ productName, className }: QuoteFormProps) {
   const onSubmit = async (data: QuoteFormData) => {
     setStatus("idle");
     setServerError(null);
+    if (!turnstileToken) {
+      setStatus("error");
+      setServerError("Please complete the security check and try again.");
+      return;
+    }
+
     const result = await submitQuoteForm({
       ...data,
       companyWebsite: websiteRef.current?.value ?? "",
       formStartedAt: startedAt.current,
+      turnstileToken,
     });
+    setTurnstileToken("");
+    setTurnstileReset((count) => count + 1);
 
     if ("success" in result && result.success) {
       trackLead("quote_form", productName);
@@ -131,6 +144,8 @@ export function QuoteForm({ productName, className }: QuoteFormProps) {
             />
           </FormField>
 
+          <TurnstileField action="quote" resetSignal={turnstileReset} onToken={onTurnstileToken} />
+
           {status === "success" && (
             <FormAlert
               variant="success"
@@ -148,7 +163,7 @@ export function QuoteForm({ productName, className }: QuoteFormProps) {
 
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || !turnstileToken}
             className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-700 px-6 py-3.5 text-sm font-semibold text-white shadow-md shadow-emerald-900/15 transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60 md:w-auto"
           >
             {isSubmitting ? (

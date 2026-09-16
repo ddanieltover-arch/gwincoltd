@@ -3,6 +3,7 @@
 import { headers } from "next/headers";
 import { getEmailFailureMessage, sendFormEmails } from "@/lib/email/send";
 import { inspectFormSpam, readSpamTrap } from "@/lib/spam-guard";
+import { readTurnstileToken, verifyTurnstile } from "@/lib/turnstile";
 import { contactSchema, quoteSchema } from "@/lib/validations/contact";
 import { getClientKey, rateLimit } from "@/lib/rate-limit";
 import { storeContactSubmission, storeQuoteSubmission } from "@/lib/submission-store";
@@ -39,6 +40,24 @@ async function assertRateLimit(action: string): Promise<FormResult | null> {
   return null;
 }
 
+async function assertTurnstile(
+  action: "contact" | "quote",
+  raw: unknown,
+): Promise<FormResult | null> {
+  const headerList = await headers();
+  const ip =
+    headerList.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+    headerList.get("x-real-ip") ??
+    undefined;
+  const verdict = await verifyTurnstile({
+    token: readTurnstileToken(raw),
+    remoteIp: ip,
+    action,
+  });
+  if (verdict.ok) return null;
+  return { error: verdict.error };
+}
+
 function dropIfSpam(
   action: string,
   raw: unknown,
@@ -70,6 +89,9 @@ export async function submitContactForm(data: unknown): Promise<FormResult> {
       fields: parsed.error.flatten().fieldErrors as Record<string, string[]>,
     };
   }
+
+  const challenge = await assertTurnstile("contact", data);
+  if (challenge) return challenge;
 
   const dropped = dropIfSpam("contact", data, {
     name: parsed.data.name,
@@ -118,6 +140,9 @@ export async function submitQuoteForm(data: unknown): Promise<FormResult> {
       fields: parsed.error.flatten().fieldErrors as Record<string, string[]>,
     };
   }
+
+  const challenge = await assertTurnstile("quote", data);
+  if (challenge) return challenge;
 
   const dropped = dropIfSpam("quote", data, {
     name: parsed.data.name,
