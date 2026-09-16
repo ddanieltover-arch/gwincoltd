@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FileText, Loader2, Send } from "lucide-react";
@@ -12,6 +12,7 @@ import {
   FormHeader,
   formInputClass,
 } from "@/components/forms/FormField";
+import { SpamTrap } from "@/components/forms/SpamTrap";
 import { quoteSchema, type QuoteFormData } from "@/lib/validations/contact";
 import { cn } from "@/lib/utils";
 
@@ -35,6 +36,8 @@ export function QuoteForm({ productName, className }: QuoteFormProps) {
 
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
   const [serverError, setServerError] = useState<string | null>(null);
+  const startedAt = useRef(Date.now());
+  const websiteRef = useRef<HTMLInputElement>(null);
 
   const {
     register,
@@ -49,7 +52,11 @@ export function QuoteForm({ productName, className }: QuoteFormProps) {
   const onSubmit = async (data: QuoteFormData) => {
     setStatus("idle");
     setServerError(null);
-    const result = await submitQuoteForm(data);
+    const result = await submitQuoteForm({
+      ...data,
+      companyWebsite: websiteRef.current?.value ?? "",
+      formStartedAt: startedAt.current,
+    });
 
     if ("success" in result && result.success) {
       trackLead("quote_form", productName);
@@ -77,7 +84,8 @@ export function QuoteForm({ productName, className }: QuoteFormProps) {
           badge={productName}
         />
 
-        <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-5" noValidate>
+        <form onSubmit={handleSubmit(onSubmit)} className="relative mt-8 space-y-5" noValidate>
+          <SpamTrap id="quote-company-website" inputRef={websiteRef} />
           <input type="hidden" {...register("product")} />
 
           <div className="grid gap-5 md:grid-cols-2">

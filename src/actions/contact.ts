@@ -2,6 +2,7 @@
 
 import { headers } from "next/headers";
 import { getEmailFailureMessage, sendFormEmails } from "@/lib/email/send";
+import { inspectFormSpam, readSpamTrap } from "@/lib/spam-guard";
 import { contactSchema, quoteSchema } from "@/lib/validations/contact";
 import { getClientKey, rateLimit } from "@/lib/rate-limit";
 import { storeContactSubmission, storeQuoteSubmission } from "@/lib/submission-store";
@@ -27,15 +28,35 @@ async function assertRateLimit(action: string): Promise<FormResult | null> {
     headerList.get("x-forwarded-for")?.split(",")[0]?.trim() ??
     headerList.get("x-real-ip") ??
     "unknown";
-  const result = rateLimit(getClientKey(action, ip), 5, 60_000);
+  const result = rateLimit(getClientKey(action, ip), 3, 10 * 60_000);
 
   if (!result.ok) {
     return {
-      error: "Too many submissions. Please wait a minute and try again, or contact us via WhatsApp.",
+      error: "Too many submissions. Please wait a few minutes and try again, or contact us via WhatsApp.",
     };
   }
 
   return null;
+}
+
+function dropIfSpam(
+  action: string,
+  raw: unknown,
+  fields: {
+    name: string;
+    email: string;
+    phone: string;
+    subject: string;
+    message: string;
+  },
+): FormResult | null {
+  const trap = readSpamTrap(raw);
+  const verdict = inspectFormSpam({ ...fields, ...trap });
+  if (!verdict.spam) return null;
+
+  const domain = fields.email.split("@")[1] ?? "unknown";
+  console.info(`[${action}] Dropped spam submission`, { reason: verdict.reason, domain });
+  return { success: true };
 }
 
 export async function submitContactForm(data: unknown): Promise<FormResult> {
@@ -49,6 +70,15 @@ export async function submitContactForm(data: unknown): Promise<FormResult> {
       fields: parsed.error.flatten().fieldErrors as Record<string, string[]>,
     };
   }
+
+  const dropped = dropIfSpam("contact", data, {
+    name: parsed.data.name,
+    email: parsed.data.email,
+    phone: parsed.data.phone,
+    subject: parsed.data.subject,
+    message: parsed.data.message,
+  });
+  if (dropped) return dropped;
 
   try {
     const meta = await getRequestMeta();
@@ -88,6 +118,15 @@ export async function submitQuoteForm(data: unknown): Promise<FormResult> {
       fields: parsed.error.flatten().fieldErrors as Record<string, string[]>,
     };
   }
+
+  const dropped = dropIfSpam("quote", data, {
+    name: parsed.data.name,
+    email: parsed.data.email,
+    phone: parsed.data.phone,
+    subject: parsed.data.subject,
+    message: parsed.data.enquiry,
+  });
+  if (dropped) return dropped;
 
   try {
     const meta = await getRequestMeta();

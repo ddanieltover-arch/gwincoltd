@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, Mail, Send } from "lucide-react";
@@ -12,6 +12,7 @@ import {
   FormHeader,
   formInputClass,
 } from "@/components/forms/FormField";
+import { SpamTrap } from "@/components/forms/SpamTrap";
 import { contactSchema, type ContactFormData } from "@/lib/validations/contact";
 import { cn } from "@/lib/utils";
 
@@ -30,6 +31,8 @@ const defaultValues: ContactFormData = {
 export function ContactForm({ className }: ContactFormProps) {
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
   const [serverError, setServerError] = useState<string | null>(null);
+  const startedAt = useRef(Date.now());
+  const websiteRef = useRef<HTMLInputElement>(null);
 
   const {
     register,
@@ -44,7 +47,11 @@ export function ContactForm({ className }: ContactFormProps) {
   const onSubmit = async (data: ContactFormData) => {
     setStatus("idle");
     setServerError(null);
-    const result = await submitContactForm(data);
+    const result = await submitContactForm({
+      ...data,
+      companyWebsite: websiteRef.current?.value ?? "",
+      formStartedAt: startedAt.current,
+    });
 
     if ("success" in result && result.success) {
       trackContact("contact_form");
@@ -71,7 +78,8 @@ export function ContactForm({ className }: ContactFormProps) {
           description="Tell us what you need — pricing, availability, shipping, or a general question. We reply within 24 business hours."
         />
 
-        <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-5" noValidate>
+        <form onSubmit={handleSubmit(onSubmit)} className="relative mt-8 space-y-5" noValidate>
+          <SpamTrap id="contact-company-website" inputRef={websiteRef} />
           <div className="grid gap-5 md:grid-cols-2">
             <FormField label="Full name" htmlFor="contact-name" required error={errors.name?.message}>
               <input
