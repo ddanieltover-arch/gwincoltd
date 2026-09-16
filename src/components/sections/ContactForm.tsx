@@ -61,7 +61,7 @@ export function ContactForm({ className }: ContactFormProps) {
       ...data,
       companyWebsite: websiteRef.current?.value ?? "",
       formStartedAt: startedAt.current,
-      turnstileToken,
+      "cf-turnstile-response": turnstileToken,
     });
     setTurnstileToken("");
     setTurnstileReset((count) => count + 1);

@@ -3,7 +3,9 @@
 import Script from "next/script";
 import { useEffect, useId, useRef, useState } from "react";
 
-const SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+const TURNSTILE_SITE_KEY =
+  process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim() || "0x4AAAAAAE49YuOQHH4nVxBh";
+
 const SCRIPT_SRC = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
 
 type TurnstileApi = {
@@ -51,7 +53,7 @@ export function TurnstileField({
   }, []);
 
   useEffect(() => {
-    if (!SITE_KEY || !scriptReady || !containerRef.current || !window.turnstile) return;
+    if (!scriptReady || !containerRef.current || !window.turnstile) return;
 
     if (widgetId.current) {
       window.turnstile.remove(widgetId.current);
@@ -59,7 +61,7 @@ export function TurnstileField({
     }
 
     widgetId.current = window.turnstile.render(containerRef.current, {
-      sitekey: SITE_KEY,
+      sitekey: TURNSTILE_SITE_KEY,
       action,
       theme: "light",
       callback: (token) => onTokenRef.current(token),
@@ -80,14 +82,6 @@ export function TurnstileField({
     onTokenRef.current("");
     window.turnstile.reset(widgetId.current);
   }, [resetSignal]);
-
-  if (!SITE_KEY) {
-    return (
-      <p className="text-sm text-amber-800" role="status">
-        The Cloudflare security check is not configured yet. Add the Turnstile site key, then redeploy.
-      </p>
-    );
-  }
 
   return (
     <div>
