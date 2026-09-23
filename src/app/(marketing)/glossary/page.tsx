@@ -53,7 +53,23 @@ export default function GlossaryPage() {
                 className="rounded-2xl border border-emerald-900/10 bg-white p-6"
               >
                 <dt className="text-xl font-bold text-emerald-950">{entry.term}</dt>
-                <dd className="mt-3 text-emerald-900/80 leading-relaxed">{entry.definition}</dd>
+                <dd className="mt-3 text-emerald-900/80 leading-relaxed">
+                  {entry.definition}
+                  {entry.slug === "cif" ? (
+                    <>
+                      {" "}
+                      After FOB transfer or under CIF, buyers can book{" "}
+                      <a
+                        href="https://thaisploginc.com/services"
+                        className="font-medium text-emerald-700 hover:underline"
+                        rel="noopener noreferrer"
+                      >
+                        Thailand ocean freight and FCL shipping
+                      </a>
+                      .
+                    </>
+                  ) : null}
+                </dd>
               </div>
             ))}
           </dl>
